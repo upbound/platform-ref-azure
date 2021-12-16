@@ -1,0 +1,11 @@
+apiVersion: azure.platformref.crossplane.io/v1alpha1
+kind: PostgreSQLInstance
+metadata:
+  name: platform-ref-azure-db
+spec:
+  parameters:
+    storageGB: 20 #Minimum value is 5
+    networkRef:
+      id: platform-ref-azure-network
+  writeConnectionSecretToRef:
+    name: platform-ref-azure-db-conn

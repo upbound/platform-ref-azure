@@ -1,0 +1,74 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xpostgresqlinstances.azure.platformref.crossplane.io
+  labels:
+    provider: azure
+    app: platform-ref-azure
+spec:
+  writeConnectionSecretsToNamespace: upbound-system
+  compositeTypeRef:
+    apiVersion: azure.platformref.crossplane.io/v1alpha1
+    kind: XPostgreSQLInstance
+  resources:
+  - name: postgresqlserver
+    base:
+      apiVersion: database.azure.crossplane.io/v1beta1
+      kind: PostgreSQLServer
+      metadata:
+        labels:
+          app: platform-ref-azure
+      spec:
+        forProvider:
+          version: "11"
+          administratorLogin: myadmin
+          location: West US 2
+          resourceGroupNameSelector:
+            matchLabels:
+              app: platform-ref-azure
+          sslEnforcement: Disabled
+          storageProfile:
+              storageMB: 5120
+          sku:
+            tier: GeneralPurpose
+            capacity: 2
+            family: Gen5  
+        writeConnectionSecretToRef:
+          namespace: upbound-system
+    patches:
+    - fromFieldPath: metadata.name
+      toFieldPath: metadata.name
+    - fromFieldPath: "metadata.uid"
+      toFieldPath: "spec.writeConnectionSecretToRef.name"
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-postgresql"
+    - fromFieldPath: "spec.parameters.storageGB"
+      toFieldPath: "spec.forProvider.storageProfile.storageMB"
+      transforms:
+      - type: math
+        math:
+          multiply: 1024
+    connectionDetails:
+        - fromConnectionSecretKey: username
+        - fromConnectionSecretKey: password
+        - fromConnectionSecretKey: endpoint
+        - fromConnectionSecretKey: port
+  # db-server vnet-rule for subnet where AKS lives in
+  - name: vnetrule
+    base:
+      apiVersion: database.azure.crossplane.io/v1alpha3
+      kind: PostgreSQLServerVirtualNetworkRule
+      spec:
+        resourceGroupNameSelector:
+            matchLabels:
+                app: platform-ref-azure
+        serverNameSelector:
+            matchLabels:
+                app: platform-ref-azure
+        properties:
+          virtualNetworkSubnetIdSelector:
+            matchLabels:
+              app: platform-ref-azure 
+

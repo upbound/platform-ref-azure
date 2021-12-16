@@ -1,0 +1,16 @@
+apiVersion: azure.platformref.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  name: platform-ref-azure-cluster
+spec:
+  id: platform-ref-azure-cluster
+  parameters:
+    nodes:
+      count: 1
+      size: medium
+    services:
+      operators:
+        prometheus:
+          version: "15.0.1"
+  writeConnectionSecretToRef:
+    name: platform-ref-azure-cluster

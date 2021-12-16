@@ -1,0 +1,7 @@
+apiVersion: azure.platformref.crossplane.io/v1alpha1
+kind: Network
+metadata:
+  name: network
+spec:
+  id: platform-ref-azure-network
+  resourceGroupName: platform-ref-azure-rg
