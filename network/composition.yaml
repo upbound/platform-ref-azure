@@ -13,87 +13,54 @@ spec:
   - base:
       apiVersion: azure.crossplane.io/v1alpha3
       kind: ResourceGroup
-      metadata:
-        labels:
-          app: platform-ref-azure
       spec:
         location: West US 2
     patches:
-      - fromFieldPath: spec.resourceGroupName
-        toFieldPath: metadata.labels[networks.azure.platformref.crossplane.io/network-id]
-      - fromFieldPath: spec.resourceGroupName
+      - fromFieldPath: spec.clusterRef.id
         toFieldPath: metadata.name
+        transforms:
+            - type: string
+              string:
+                fmt: "%s-rg"
+      - fromFieldPath: spec.clusterRef.id
+        toFieldPath: metadata.labels[app]
   - base:
       apiVersion: network.azure.crossplane.io/v1alpha3
       kind: VirtualNetwork
       spec:
+        resourceGroupNameSelector:
+          matchControllerRef: true
         location: West US 2
         properties:
           addressSpace:
             addressPrefixes: ['192.168.0.0/16']
     patches:
-      - fromFieldPath: spec.id
-        toFieldPath: metadata.labels[networks.azure.platformref.crossplane.io/network-id]
-      - fromFieldPath: spec.id
+      - fromFieldPath: spec.clusterRef.id
+        toFieldPath: metadata.labels[app]
+      - fromFieldPath: spec.clusterRef.id
         toFieldPath: metadata.name
-      - fromFieldPath: spec.id
-        toFieldPath: spec.virtualNetworkName
-      - fromFieldPath: spec.resourceGroupName
-        toFieldPath: spec.resourceGroupName
+        transforms:
+            - type: string
+              string:
+                fmt: "%s-vnet"
   - base:
       apiVersion: network.azure.crossplane.io/v1alpha3
       kind: Subnet
-      metadata:
-        labels:
-          app: platform-ref-azure
-        name:
       spec:
+        resourceGroupNameSelector:
+          matchControllerRef: true
+        virtualNetworkNameSelector:
+          matchControllerRef: true
         properties:
           addressPrefix: '192.168.1.0/24'
           serviceEndpoints:
             - service: Microsoft.Sql
     patches:
-      - fromFieldPath: spec.id
-        toFieldPath: metadata.labels[networks.azure.platformref.crossplane.io/network-id]
-      - fromFieldPath: spec.resourceGroupName
-        toFieldPath: spec.resourceGroupName
-      - fromFieldPath: spec.id
-        toFieldPath: spec.virtualNetworkName
-  # - base:
-  #     apiVersion: network.azure.crossplane.io/v1alpha3
-  #     kind: Subnet
-  #     metadata:
-  #       labels:
-  #         app: platform-ref-azure
-  #       name:
-  #     spec:
-  #       properties:
-  #         addressPrefix: '192.168.2.0/24'
-  #         serviceEndpoints:
-  #           - service: Microsoft.Sql
-  #   patches:
-  #     - fromFieldPath: spec.id
-  #       toFieldPath: metadata.labels[networks.azure.platformref.crossplane.io/network-id]
-  #     - fromFieldPath: spec.resourceGroupName
-  #       toFieldPath: spec.resourceGroupName
-  #     - fromFieldPath: spec.id
-  #       toFieldPath: spec.virtualNetworkName
-  # - base:
-  #     apiVersion: network.azure.crossplane.io/v1alpha3
-  #     kind: Subnet
-  #     metadata:
-  #       labels:
-  #         app: platform-ref-azure
-  #       name:
-  #     spec:
-  #       properties:
-  #         addressPrefix: '192.168.3.0/24'
-  #         serviceEndpoints:
-  #           - service: Microsoft.Sql
-  #   patches:
-  #     - fromFieldPath: spec.id
-  #       toFieldPath: metadata.labels[networks.azure.platformref.crossplane.io/network-id]
-  #     - fromFieldPath: spec.resourceGroupName
-  #       toFieldPath: spec.resourceGroupName
-  #     - fromFieldPath: spec.id
-  #       toFieldPath: spec.virtualNetworkName
+      - fromFieldPath: spec.clusterRef.id
+        toFieldPath: metadata.labels[app]
+      - fromFieldPath: spec.clusterRef.id
+        toFieldPath: metadata.name
+        transforms:
+            - type: string
+              string:
+                fmt: "%s-sn"
