@@ -69,7 +69,7 @@ spec:
                 properties:
                   storageGB:
                     type: integer
-                  networkRef:
+                  clusterRef:
                     type: object
                     description: "A reference to the Network object that this postgres should be connected to."
                     properties:

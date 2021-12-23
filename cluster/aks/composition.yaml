@@ -17,15 +17,13 @@ spec:
           dnsNamePrefix: platform-ref-azure-cluster
           location: West US 2
           version: "1.21.2"
-          vnetSubnetIDSelector:
-            matchLabels:
-              app: platform-ref-azure
-          resourceGroupNameSelector:
-            matchLabels:
-              app: platform-ref-azure
       patches:
         - fromFieldPath: metadata.annotations[crossplane.io/external-name]
           toFieldPath: metadata.annotations[crossplane.io/external-name]
+        - fromFieldPath: spec.id
+          toFieldPath: spec.resourceGroupNameSelector.matchLabels[azure.platformref.crossplane.io/app]
+        - fromFieldPath: spec.id
+          toFieldPath: spec.vnetSubnetIDSelector.matchLabels[azure.platformref.crossplane.io/app]
         - fromFieldPath: spec.parameters.nodes.size
           toFieldPath: spec.nodeVMSize
           transforms:

@@ -4,4 +4,4 @@ metadata:
   name: network
 spec:
   clusterRef:
-    id: platform-ref-azure
+    id: platform-ref-azure #This field should match the cluster composite resource spec.id field

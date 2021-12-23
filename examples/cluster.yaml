@@ -1,9 +1,9 @@
 apiVersion: azure.platformref.crossplane.io/v1alpha1
 kind: Cluster
 metadata:
-  name: platform-ref-azure-cluster
+  name: platform-ref-azure
 spec:
-  id: platform-ref-azure-cluster
+  id: platform-ref-azure #This field is used as a reference match for network and database composite resources via clusterRef.id
   parameters:
     nodes:
       count: 1
@@ -13,4 +13,4 @@ spec:
         prometheus:
           version: "15.0.1"
   writeConnectionSecretToRef:
-    name: platform-ref-azure-cluster
+    name: platform-ref-azure

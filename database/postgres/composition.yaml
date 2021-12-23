@@ -4,7 +4,6 @@ metadata:
   name: xpostgresqlinstances.azure.platformref.crossplane.io
   labels:
     provider: azure
-    app: platform-ref-azure
 spec:
   writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
@@ -15,17 +14,11 @@ spec:
     base:
       apiVersion: database.azure.crossplane.io/v1beta1
       kind: PostgreSQLServer
-      metadata:
-        labels:
-          app: platform-ref-azure
       spec:
         forProvider:
           version: "11"
           administratorLogin: myadmin
           location: West US 2
-          resourceGroupNameSelector:
-            matchLabels:
-              app: platform-ref-azure
           sslEnforcement: Disabled
           storageProfile:
               storageMB: 5120
@@ -50,6 +43,8 @@ spec:
       - type: math
         math:
           multiply: 1024
+    - fromFieldPath: spec.parameters.clusterRef.id
+      toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.crossplane.io/app]
     connectionDetails:
         - fromConnectionSecretKey: username
         - fromConnectionSecretKey: password
@@ -61,14 +56,12 @@ spec:
       apiVersion: database.azure.crossplane.io/v1alpha3
       kind: PostgreSQLServerVirtualNetworkRule
       spec:
-        resourceGroupNameSelector:
-            matchLabels:
-                app: platform-ref-azure
         serverNameSelector:
-            matchLabels:
-                app: platform-ref-azure
-        properties:
-          virtualNetworkSubnetIdSelector:
-            matchLabels:
-              app: platform-ref-azure 
-
+          matchControllerRef: true
+    patches:
+    - fromFieldPath: metadata.name
+      toFieldPath: metadata.name
+    - fromFieldPath: spec.parameters.clusterRef.id
+      toFieldPath: spec.properties.virtualNetworkSubnetIdSelector.matchLabels[azure.platformref.crossplane.io/app]
+    - fromFieldPath: spec.parameters.clusterRef.id
+      toFieldPath: spec.resourceGroupNameSelector.matchLabels[azure.platformref.crossplane.io/app]

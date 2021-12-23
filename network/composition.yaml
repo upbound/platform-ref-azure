@@ -23,7 +23,7 @@ spec:
               string:
                 fmt: "%s-rg"
       - fromFieldPath: spec.clusterRef.id
-        toFieldPath: metadata.labels[app]
+        toFieldPath: metadata.labels[azure.platformref.crossplane.io/app]
   - base:
       apiVersion: network.azure.crossplane.io/v1alpha3
       kind: VirtualNetwork
@@ -57,7 +57,7 @@ spec:
             - service: Microsoft.Sql
     patches:
       - fromFieldPath: spec.clusterRef.id
-        toFieldPath: metadata.labels[app]
+        toFieldPath: metadata.labels[azure.platformref.crossplane.io/app]
       - fromFieldPath: spec.clusterRef.id
         toFieldPath: metadata.name
         transforms:

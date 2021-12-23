@@ -5,7 +5,7 @@ metadata:
 spec:
   parameters:
     storageGB: 20 #Minimum value is 5
-    networkRef:
-      id: platform-ref-azure-network
+    clusterRef:
+      id: platform-ref-azure #This field should match the cluster composite resource spec.id field
   writeConnectionSecretToRef:
     name: platform-ref-azure-db-conn
