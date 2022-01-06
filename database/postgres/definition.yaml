@@ -6,6 +6,19 @@ metadata:
     upbound.io/ui-schema: |-
       ---
       configSections:
+      - title: Cluster Info
+        description: Information Cluster
+        items:
+        - name: id
+          controlType: singleInput
+          type: string
+          path: ".spec.parameters.clusterRef.id"
+          title: Cluster ID
+          description: Cluster Ref
+          default: platform-ref-azure-cluster
+          validation:
+          - required: true
+            customError: Cluster ID is required.
       - title: Database Size
         description: Enter information to size your database
         items:
