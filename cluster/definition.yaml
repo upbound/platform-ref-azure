@@ -56,19 +56,6 @@ metadata:
           validation:
           - required: true
             customError: Node size is required.
-      - title: Cluster Networking
-        description: Select a network fabric for your cluster
-        items:
-        - name: networkRef
-          controlType: singleInput
-          type: string
-          path: ".spec.parameters.networkRef.id"
-          title: Network Ref
-          description: Network fabric to connect the database to
-          default: platform-ref-azure-network
-          validation:
-          - required: true
-            customError: Network ref is required.
       - title: Cluster Services
         description: Configure cluster services and operators
         items:

@@ -1,7 +1,7 @@
 # Azure Reference Platform for Kubernetes + Data Services
 
 This repository contains a reference Azure Platform
-[Configuration](https://crossplane.io/docs/v1.3/getting-started/create-configuration.html)
+[Configuration](https://crossplane.io/docs/v1.6/getting-started/create-configuration.html)
 for use as a starting point in [Upbound Cloud](https://upbound.io) or
 [Upbound Universal Crossplane (UXP)](https://www.upbound.io/uxp/) to build,
 run and operate your own internal cloud platform and offer a self-service
@@ -63,7 +63,7 @@ Crossplane `Providers` include the cloud service primitives (AWS, Azure, GCP,
 Alibaba) used in a `Composition`.
 
 Learn more about `Composition` in the [Crossplane
-Docs](https://crossplane.io/docs/v1.3/concepts/composition.html).
+Docs](https://crossplane.io/docs/v1.6/concepts/composition.html).
 
 ## Quick Start
 
@@ -141,7 +141,7 @@ cp kubectl-crossplane /usr/local/bin
 
 ```console
 # Check the latest version available in https://cloud.upbound.io/registry/upbound/platform-ref-azure
-PLATFORM_VERSION=v0.2.0
+PLATFORM_VERSION=v0.1.0
 PLATFORM_CONFIG=registry.upbound.io/upbound/platform-ref-azure:${PLATFORM_VERSION}
 
 kubectl crossplane install configuration ${PLATFORM_CONFIG}
@@ -159,7 +159,7 @@ Create a JSON file that contains all the information needed to connect and authe
 
 ```console
 # Create service principal with Owner role
-az ad sp create-for-rbac --sdk-auth --role Owner > crossplane-azure-provider-key.json
+az ad sp create-for-rbac --sdk-auth --role Owner --name platform-ref-azure > crossplane-azure-provider-key.json
 ```
 
 Take note of the `clientID` value from the JSON file that we just created, and save it to an environment variable:
@@ -203,24 +203,7 @@ Now we’ll create our Secret that contains the credential and ProviderConfig re
 
 ```console
 kubectl create secret generic azure-account-creds -n upbound-system --from-file=credentials=./crossplane-azure-provider-key.json
-```
-
-```console
-cat > provider.yaml <<EOF
----
-apiVersion: azure.crossplane.io/v1beta1
-kind: ProviderConfig
-metadata:
-  name: default
-  namespace: upbound-system
-spec:
-  credentials:
-    source: Secret
-    secretRef:
-      namespace: upbound-system
-      name: azure-account-creds
-      key: credentials
-EOF
+kubectl -n upbound-system apply -f examples/azure-default-provider.yaml
 ```
 
 Apply it to the cluster:
@@ -253,6 +236,20 @@ kubectl get composite
 kubectl get managed
 ```
 
+#### Create AKS Cluster
+
+```console
+kubectl apply -f examples/cluster.yaml
+```
+
+verify status:
+
+```console
+kubectl get claim
+kubectl get composite
+kubectl get managed
+```
+
 #### Invite App Teams to you Organization in Upbound Cloud
 
 1. Create a Team `team1`.
@@ -265,17 +262,6 @@ App Dev/Ops: Consume the infrastructure you need using kubectl
 1. **Join** your [Upbound Cloud](https://cloud.upbound.io/register)
    `Organization`
 1. Verify access to your team `Control Planes` and Registries
-
-#### Provision a CompositePostgreSQLInstance in your team Control Plane GUI console
-
-1. Browse the available self-service APIs (XRDs) Control Plane
-1. Provision a `CompositePostgreSQLInstance` using the custom generated GUI for your
-Platform `Configuration`
-1. View status / details in your `Control Plane` GUI console
-
-#### Connect kubectl to your team Control Plane
-
-1. Connect `kubectl` to a `Control Plane` from the self-service GUI console.
 
 #### Provision a PostgreSQLInstance using kubectl
 
@@ -297,13 +283,9 @@ kubectl get managed
 
 Delete resources created through the `Control Plane` Configurations menu:
 
-* From the `Teams` GUI using the ellipsis menu in the resource view.
-* Using `kubectl delete -n team1 <claim-name>`.
-
-Delete resources created using `kubectl`:
-
 ```console
 kubectl delete -f examples/postgres-claim.yaml
+kubectl delete -f examples/cluster.yaml
 kubectl delete -f examples/network.yaml
 ```
 
@@ -321,10 +303,11 @@ kubectl delete providers.pkg.crossplane.io provider-azure
 kubectl delete providers.pkg.crossplane.io provider-helm
 ```
 
-#### Uninstall Crossplane kubectl plugin
+### Uninstall Azure App Registration
 
 ```console
-rm /usr/local/bin/kubectl-crossplane*
+AZ_APP_ID=$(az ad sp list --display-name platform-ref-azure)
+az ad sp delete --id $AZ_APP_ID
 ```
 
 ## APIs in this Configuration

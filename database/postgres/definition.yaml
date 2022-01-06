@@ -20,16 +20,6 @@ metadata:
           - minimum: 1
           - maximum: 500
           - required: true
-        - name: networkRef
-          controlType: singleInput
-          type: string
-          path: ".spec.parameters.networkRef.id"
-          title: Network Ref
-          description: Network fabric to connect the database to
-          default: platform-ref-azure-network
-          validation:
-          - required: true
-            customError: Network ref is required and should match the network ref of the app cluster.
         - name: writeSecretRef
           controlType: singleInput
           type: string
