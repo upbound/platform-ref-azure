@@ -15,7 +15,7 @@ metadata:
           path: ".spec.parameters.clusterRef.id"
           title: Cluster ID
           description: Cluster Ref
-          default: platform-ref-azure-cluster
+          default: platform-ref-azure
           validation:
           - required: true
             customError: Cluster ID is required.
