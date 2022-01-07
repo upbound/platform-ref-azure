@@ -203,13 +203,9 @@ Now we’ll create our Secret that contains the credential and ProviderConfig re
 
 ```console
 kubectl create secret generic azure-account-creds -n upbound-system --from-file=credentials=./crossplane-azure-provider-key.json
-kubectl -n upbound-system apply -f examples/azure-default-provider.yaml
+kubectl apply -f examples/azure-default-provider.yaml
 ```
 
-Apply it to the cluster:
-```console
-kubectl apply -f "provider.yaml"
-```
 The output will look like the following:
 
 ```shell
