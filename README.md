@@ -294,9 +294,9 @@ kubectl get managed
 #### Uninstall Provider & Platform Configuration
 
 ```console
-kubectl delete configurations.pkg.crossplane.io platform-ref-azure
-kubectl delete providers.pkg.crossplane.io provider-azure
-kubectl delete providers.pkg.crossplane.io provider-helm
+kubectl delete configuration.pkg.crossplane.io upbound-platform-ref-azure
+kubectl delete provider.pkg.crossplane.io crossplane-provider-azure
+kubectl delete provider.pkg.crossplane.io crossplane-provider-helm
 ```
 
 ### Uninstall Azure App Registration
