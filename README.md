@@ -246,19 +246,6 @@ kubectl get composite
 kubectl get managed
 ```
 
-#### Invite App Teams to you Organization in Upbound Cloud
-
-1. Create a Team `team1`.
-1. Invite app team members and grant access to `Control Planes` and `Repositories`.
-
-App Dev/Ops: Consume the infrastructure you need using kubectl
-
-#### Join your Organization in Upbound Cloud
-
-1. **Join** your [Upbound Cloud](https://cloud.upbound.io/register)
-   `Organization`
-1. Verify access to your team `Control Planes` and Registries
-
 #### Provision a PostgreSQLInstance using kubectl
 
 ```console
