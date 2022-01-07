@@ -1,0 +1,11 @@
+apiVersion: azure.platformref.crossplane.io/v1alpha1
+kind: PostgreSQLInstance
+metadata:
+  name: platform-ref-azure-db
+spec:
+  parameters:
+    storageGB: 20 #Minimum value is 5
+    clusterRef:
+      id: platform-ref-azure #This field should match the cluster composite resource spec.id field
+  writeConnectionSecretToRef:
+    name: platform-ref-azure-db-conn

@@ -1,0 +1,95 @@
+apiVersion: meta.pkg.crossplane.io/v1alpha1
+kind: Configuration
+metadata:
+  name: platform-ref-azure
+  annotations:
+    meta.crossplane.io/maintainer: Upbound <info@upbound.io>
+    meta.crossplane.io/source: github.com/upbound/platform-ref-azure
+    meta.crossplane.io/license: Apache-2.0
+    meta.crossplane.io/description: |
+      This reference platform Configuration for Kubernetes and Data Services
+      is a starting point to build, run, and operate your own internal cloud
+      platform and offer a self-service console and API to your internal teams.
+
+    meta.crossplane.io/readme: |
+      This reference platform `Configuration` for Kubernetes and Data Services
+      is a starting point to build, run, and operate your own internal cloud
+      platform and offer a self-service console and API to your internal teams.
+      It provides platform APIs to provision fully configured AKS clusters,
+      with secure networking, and stateful cloud services designed to
+      securely connect to the nodes in each AKS cluster -- all composed using
+      cloud service primitives from the [Crossplane Azure
+      Provider](https://doc.crds.dev/github.com/crossplane/provider-azure). App
+      deployments can securely connect to the infrastructure they need using
+      secrets distributed directly to the app namespace.
+
+      [Quickstart
+      Guide](https://github.com/upbound/platform-ref-azure/#quick-start)
+
+      [APIs in this
+      Configuration](https://github.com/upbound/platform-ref-azure/#apis-in-this-configuration)
+
+      To learn more checkout the [GitHub
+      repo](https://github.com/upbound/platform-ref-azure/) that you can copy and
+      customize to meet the exact needs of your organization!
+
+    meta.crossplane.io/iconURI: data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNjVweCIgaGVpZ2h0PSI2NXB4IiB2aWV3Qm94PSIwIDAgNjUgNjUiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8dGl0bGU+QXBwbGljYXRpb24gSWNvbnMvQXp1cmUtQ29uZmlndXJhdGlvbi82NXg2NTwvdGl0bGU+CiAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iNTEuNTg2Mzk1MiUiIGlkPSJsaW5lYXJHcmFkaWVudC0xIj4KICAgICAgICAgICAgPHN0b3Agc3RvcC1jb2xvcj0iI0ZBRkFGQSIgb2Zmc2V0PSIwJSI+PC9zdG9wPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjRkZGRkZGIiBvZmZzZXQ9IjEwMCUiPjwvc3RvcD4KICAgICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPC9kZWZzPgogICAgPGcgaWQ9IkFwcGxpY2F0aW9uLUljb25zL0F6dXJlLUNvbmZpZ3VyYXRpb24vNjV4NjUiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxyZWN0IGlkPSJSZWN0YW5nbGUtQ29weS0xMyIgc3Ryb2tlPSIjRDhEOERBIiBmaWxsPSJ1cmwoI2xpbmVhckdyYWRpZW50LTEpIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHg9IjAuNSIgeT0iMC41IiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxNiI+PC9yZWN0PgogICAgICAgIDxnIGlkPSJHcm91cCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTguMDAwMDAwLCAxOC4wMDAwMDApIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHN0cm9rZS13aWR0aD0iMC41Ij4KICAgICAgICAgICAgPHBhdGggZD0iTTAuMDAzMTQxNjM3NDUsMC40NDUxOTIyOSBDMC4wMDMxNDE2Mzc0NSwwLjMwMjQyMTcwMSAwLjAwMzE0MTYzNzQ1LDAuMTUxMjUyODQyIDAuMDExNTQzMTEzMSwwIEM0LjY3NDM2MjA4LDAuMDA4NDgyMjUyNjYgOS4zMzcxODEwNCwwIDE0LDAuMDA4NDgyMjUyNjYgTDE0LDEzLjk5MTYwMTcgQzkuMzM3MTgxMDQsMTQuMDA4Mzk4MyA0LjY3NDM2MjA4LDEzLjk5MTYwMTcgMC4wMTE1NDMxMTMxLDE0IEMtMC4wMTM2NjEzMTM4LDkuNDgxNzMwNzYgMC4wMTE1NDMxMTMxLDQuOTYzNDYxNTMgMC4wMDMxNDE2Mzc0NSwwLjQ0NTE5MjI5IFoiIGlkPSJQYXRoIiBzdHJva2U9IiNGMjUwMjIiIGZpbGw9IiNGMjUwMjIiPjwvcGF0aD4KICAgICAgICAgICAgPHBhdGggZD0iTTE2LDAuMDMzNTkzMDc5OCBDMTYuMTAwNzc5OCwwLjAwODM5ODI2OTk2IDE2LjIwMTU1OTcsMCAxNi4zMTA3Mzc5LDAgQzIwLjg3MTAyNTgsMC4wMDg0ODIyNTI2NiAyNS40Mzk3MTIxLDAgMzAsMC4wMDg0ODIyNTI2NiBMMzAsMTMuOTkxNjAxNyBDMjUuMzM4OTMyMiwxNC4wMDgzOTgzIDIwLjY3Nzg2NDQsMTMuOTkxNjAxNyAxNi4wMTY3OTY2LDE0IEMxNS45ODMyMDM0LDkuMzQ3Mjc0NDYgMTYuMDI1MTk1LDQuNjg2MjM0NjQgMTYsMC4wMzM1OTMwNzk4IFoiIGlkPSJQYXRoIiBzdHJva2U9IiM3RkJBMDAiIGZpbGw9IiM3RkJBMDAiPjwvcGF0aD4KICAgICAgICAgICAgPHBhdGggZD0iTTAsMjkuOTY2MzIyOSBDMC4wMzM1OTMyODEzLDI1LjMxMzY4MTQgLTAuMDE2Nzk2NjQwNywyMC42NTI2NDE2IDAuMDI1MTk0OTYxLDE2IEM0LjY3Nzg2NDQzLDE2LjAwODM5ODMgOS4zMzg5MzIyMSwxNS45OTE2MDE3IDE0LDE2LjAwODM5ODMgTDE0LDI5Ljk5MTUxNzcgQzkuNTE1Mjk2OTQsMzAgNS4wMzg5OTIyLDI5Ljk5MTUxNzcgMC41NTQyODkxNDIsMzAgQzAuMzY5NTI2MDk1LDMwIDAuMTg0NzYzMDQ3LDMwIDAsMjkuOTY2MzIyOSBMMCwyOS45NjYzMjI5IFoiIGlkPSJQYXRoIiBzdHJva2U9IiMwMEE0RUYiIGZpbGw9IiMwMEE0RUYiPjwvcGF0aD4KICAgICAgICAgICAgPHBhdGggZD0iTTE2LjAwODM5ODMsMTcuMDMyOTg3MiBDMTYuMDA4Mzk4MywxNi42ODg2NTgxIDE1Ljk5MTYwMTcsMTYuMzQ0MzI5MSAxNi4wMTY3OTY2LDE2IEMyMC42Nzc4NjQ0LDE2LjAwODM5ODMgMjUuMzM4OTMyMiwxNS45OTE2MDE3IDMwLDE2LjAwODM5ODMgTDMwLDI5Ljk5MTUxNzcgQzI1LjQzOTcxMjEsMzAgMjAuODcxMDI1OCwyOS45OTE1MTc3IDE2LjMxMDczNzksMzAgQzE2LjIwMTU1OTcsMjkuOTkxNTE3NyAxNi4xMDA3Nzk4LDI5Ljk4MzIwMzUgMTYsMjkuOTc0ODA1MiBDMTYuMDE2Nzk2NiwyNS42NTgwMTA0IDE2LDIxLjM0OTY5OCAxNi4wMDgzOTgzLDE3LjAzMjk4NzIgWiIgaWQ9IlBhdGgiIHN0cm9rZT0iI0ZGQjkwMCIgZmlsbD0iI0ZGQjkwMCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+
+
+    friendly-name.meta.crossplane.io: Azure Reference Platform
+    friendly-group-name.meta.crossplane.io/azure.platformref.crossplane.io: Azure
+
+    friendly-kind-name.meta.crossplane.io/compositenetwork.azure.platformref.crossplane.io: Composite Network
+    friendly-kind-name.meta.crossplane.io/network.azure.platformref.crossplane.io: Network
+
+    friendly-kind-name.meta.crossplane.io/compositecluster.azure.platformref.crossplane.io: Composite Kubernetes Cluster
+    friendly-kind-name.meta.crossplane.io/cluster.azure.platformref.crossplane.io: Kubernetes Cluster
+
+    friendly-kind-name.meta.crossplane.io/services.azure.platformref.crossplane.io: Cluster Services
+    friendly-kind-name.meta.crossplane.io/aks.azure.platformref.crossplane.io: AKS Cluster
+
+    # TODO(negz): Remove these older style annotations once annotation consumers
+    # have had a chance to update.
+    company: Upbound
+    maintainer: Upbound <info@upbound.io>
+    keywords: azure, cloud-native, kubernetes, example, platform, reference
+    source: github.com/upbound/platform-ref-azure
+    license: Apache-2.0
+    descriptionShort: |
+      The Azure reference platform for Kubernetes and Data Services.
+
+    description: |
+      This reference platform Configuration for Kubernetes and Data Services
+      is a starting point to build, run, and operate your own internal cloud
+      platform and offer a self-service console and API to your internal teams.
+
+    readme: |
+      This reference platform `Configuration` for Kubernetes and Data Services
+      is a starting point to build, run, and operate your own internal cloud
+      platform and offer a self-service console and API to your internal teams.
+      It provides platform APIs to provision fully configured AKS clusters,
+      with secure networking, and stateful cloud services (Azure DB for PostgreSQL) designed to
+      securely connect to the nodes in each AKS cluster -- all composed using
+      cloud service primitives from the [Crossplane Azure
+      Provider](https://doc.crds.dev/github.com/crossplane/provider-azure). App
+      deployments can securely connect to the infrastructure they need using
+      secrets distributed directly to the app namespace.
+
+      [Quickstart
+      Guide](https://github.com/upbound/platform-ref-azure/#quick-start)
+
+      [APIs in this
+      Configuration](https://github.com/upbound/platform-ref-azure/#apis-in-this-configuration)
+
+      To learn more checkout the [GitHub
+      repo](https://github.com/upbound/platform-ref-azure/) that you can copy and
+      customize to meet the exact needs of your organization!
+
+    iconData: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNjVweCIgaGVpZ2h0PSI2NXB4IiB2aWV3Qm94PSIwIDAgNjUgNjUiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8dGl0bGU+QXBwbGljYXRpb24gSWNvbnMvQXp1cmUtQ29uZmlndXJhdGlvbi82NXg2NTwvdGl0bGU+CiAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iNTEuNTg2Mzk1MiUiIGlkPSJsaW5lYXJHcmFkaWVudC0xIj4KICAgICAgICAgICAgPHN0b3Agc3RvcC1jb2xvcj0iI0ZBRkFGQSIgb2Zmc2V0PSIwJSI+PC9zdG9wPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjRkZGRkZGIiBvZmZzZXQ9IjEwMCUiPjwvc3RvcD4KICAgICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPC9kZWZzPgogICAgPGcgaWQ9IkFwcGxpY2F0aW9uLUljb25zL0F6dXJlLUNvbmZpZ3VyYXRpb24vNjV4NjUiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxyZWN0IGlkPSJSZWN0YW5nbGUtQ29weS0xMyIgc3Ryb2tlPSIjRDhEOERBIiBmaWxsPSJ1cmwoI2xpbmVhckdyYWRpZW50LTEpIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHg9IjAuNSIgeT0iMC41IiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxNiI+PC9yZWN0PgogICAgICAgIDxnIGlkPSJHcm91cCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTguMDAwMDAwLCAxOC4wMDAwMDApIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHN0cm9rZS13aWR0aD0iMC41Ij4KICAgICAgICAgICAgPHBhdGggZD0iTTAuMDAzMTQxNjM3NDUsMC40NDUxOTIyOSBDMC4wMDMxNDE2Mzc0NSwwLjMwMjQyMTcwMSAwLjAwMzE0MTYzNzQ1LDAuMTUxMjUyODQyIDAuMDExNTQzMTEzMSwwIEM0LjY3NDM2MjA4LDAuMDA4NDgyMjUyNjYgOS4zMzcxODEwNCwwIDE0LDAuMDA4NDgyMjUyNjYgTDE0LDEzLjk5MTYwMTcgQzkuMzM3MTgxMDQsMTQuMDA4Mzk4MyA0LjY3NDM2MjA4LDEzLjk5MTYwMTcgMC4wMTE1NDMxMTMxLDE0IEMtMC4wMTM2NjEzMTM4LDkuNDgxNzMwNzYgMC4wMTE1NDMxMTMxLDQuOTYzNDYxNTMgMC4wMDMxNDE2Mzc0NSwwLjQ0NTE5MjI5IFoiIGlkPSJQYXRoIiBzdHJva2U9IiNGMjUwMjIiIGZpbGw9IiNGMjUwMjIiPjwvcGF0aD4KICAgICAgICAgICAgPHBhdGggZD0iTTE2LDAuMDMzNTkzMDc5OCBDMTYuMTAwNzc5OCwwLjAwODM5ODI2OTk2IDE2LjIwMTU1OTcsMCAxNi4zMTA3Mzc5LDAgQzIwLjg3MTAyNTgsMC4wMDg0ODIyNTI2NiAyNS40Mzk3MTIxLDAgMzAsMC4wMDg0ODIyNTI2NiBMMzAsMTMuOTkxNjAxNyBDMjUuMzM4OTMyMiwxNC4wMDgzOTgzIDIwLjY3Nzg2NDQsMTMuOTkxNjAxNyAxNi4wMTY3OTY2LDE0IEMxNS45ODMyMDM0LDkuMzQ3Mjc0NDYgMTYuMDI1MTk1LDQuNjg2MjM0NjQgMTYsMC4wMzM1OTMwNzk4IFoiIGlkPSJQYXRoIiBzdHJva2U9IiM3RkJBMDAiIGZpbGw9IiM3RkJBMDAiPjwvcGF0aD4KICAgICAgICAgICAgPHBhdGggZD0iTTAsMjkuOTY2MzIyOSBDMC4wMzM1OTMyODEzLDI1LjMxMzY4MTQgLTAuMDE2Nzk2NjQwNywyMC42NTI2NDE2IDAuMDI1MTk0OTYxLDE2IEM0LjY3Nzg2NDQzLDE2LjAwODM5ODMgOS4zMzg5MzIyMSwxNS45OTE2MDE3IDE0LDE2LjAwODM5ODMgTDE0LDI5Ljk5MTUxNzcgQzkuNTE1Mjk2OTQsMzAgNS4wMzg5OTIyLDI5Ljk5MTUxNzcgMC41NTQyODkxNDIsMzAgQzAuMzY5NTI2MDk1LDMwIDAuMTg0NzYzMDQ3LDMwIDAsMjkuOTY2MzIyOSBMMCwyOS45NjYzMjI5IFoiIGlkPSJQYXRoIiBzdHJva2U9IiMwMEE0RUYiIGZpbGw9IiMwMEE0RUYiPjwvcGF0aD4KICAgICAgICAgICAgPHBhdGggZD0iTTE2LjAwODM5ODMsMTcuMDMyOTg3MiBDMTYuMDA4Mzk4MywxNi42ODg2NTgxIDE1Ljk5MTYwMTcsMTYuMzQ0MzI5MSAxNi4wMTY3OTY2LDE2IEMyMC42Nzc4NjQ0LDE2LjAwODM5ODMgMjUuMzM4OTMyMiwxNS45OTE2MDE3IDMwLDE2LjAwODM5ODMgTDMwLDI5Ljk5MTUxNzcgQzI1LjQzOTcxMjEsMzAgMjAuODcxMDI1OCwyOS45OTE1MTc3IDE2LjMxMDczNzksMzAgQzE2LjIwMTU1OTcsMjkuOTkxNTE3NyAxNi4xMDA3Nzk4LDI5Ljk4MzIwMzUgMTYsMjkuOTc0ODA1MiBDMTYuMDE2Nzk2NiwyNS42NTgwMTA0IDE2LDIxLjM0OTY5OCAxNi4wMDgzOTgzLDE3LjAzMjk4NzIgWiIgaWQ9IlBhdGgiIHN0cm9rZT0iI0ZGQjkwMCIgZmlsbD0iI0ZGQjkwMCI+PC9wYXRoPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+
+spec:
+  crossplane:
+    version: ">=v1.0.0-0"
+  dependsOn:
+    - provider: registry.upbound.io/crossplane/provider-azure
+      version: ">=v0.18.1-0"
+    - provider: registry.upbound.io/crossplane/provider-helm
+      version: ">=v0.9.0"
