@@ -26,7 +26,7 @@ spec:
             capacity: 2
             family: Gen5  
     patches:
-    - fromFieldPath: spec.writeConnectionSecretToRef.namespace
+    - fromFieldPath: spec.claimRef.namespace
       toFieldPath: spec.writeConnectionSecretToRef.namespace
     - fromFieldPath: metadata.name
       toFieldPath: metadata.name
