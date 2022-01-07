@@ -5,7 +5,6 @@ metadata:
   labels:
     provider: azure
 spec:
-  writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
     apiVersion: azure.platformref.crossplane.io/v1alpha1
     kind: XPostgreSQLInstance
@@ -26,9 +25,9 @@ spec:
             tier: GeneralPurpose
             capacity: 2
             family: Gen5  
-        writeConnectionSecretToRef:
-          namespace: upbound-system
     patches:
+    - fromFieldPath: spec.writeConnectionSecretToRef.namespace
+      toFieldPath: spec.writeConnectionSecretToRef.namespace
     - fromFieldPath: metadata.name
       toFieldPath: metadata.name
     - fromFieldPath: "metadata.uid"

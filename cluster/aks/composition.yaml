@@ -5,7 +5,6 @@ metadata:
   labels:
     provider: azure
 spec:
-  writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
     apiVersion: azure.platformref.crossplane.io/v1alpha1
     kind: XAKS
@@ -51,7 +50,6 @@ spec:
           credentials:
             source: Secret
             secretRef:
-              namespace: upbound-systen
               key: kubeconfig
       patches:
         - fromFieldPath: spec.id

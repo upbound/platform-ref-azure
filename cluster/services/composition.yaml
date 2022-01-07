@@ -6,7 +6,6 @@ metadata:
     plan: full
     provider: helm
 spec:
-  writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
     apiVersion: azure.platformref.crossplane.io/v1alpha1
     kind: Services
@@ -37,3 +36,6 @@ spec:
         # Derive the Prometheus operator image and tag from the XR.
         - fromFieldPath: spec.operators.prometheus.version
           toFieldPath: spec.forProvider.chart.version
+        # Pass XR namespace to write connection secrets namespace
+        - fromFieldPath: spec.writeConnectionSecretToRef.namespace
+          toFieldPath: spec.writeConnectionSecretToRef.namespace
