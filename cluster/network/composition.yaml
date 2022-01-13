@@ -15,13 +15,19 @@ spec:
       spec:
         location: West US 2
     patches:
-      - fromFieldPath: spec.clusterRef.id
+      - fromFieldPath: spec.id
         toFieldPath: metadata.name
         transforms:
-            - type: string
-              string:
-                fmt: "%s-rg"
-      - fromFieldPath: spec.clusterRef.id
+          - type: string
+            string:
+              fmt: "%s-rg"
+      - fromFieldPath: spec.id
+        toFieldPath: metadata.annotations[crossplane.io/external-name]
+        transforms:
+          - type: string
+            string:
+              fmt: "%s-rg"
+      - fromFieldPath: spec.id
         toFieldPath: metadata.labels[azure.platformref.crossplane.io/app]
   - base:
       apiVersion: network.azure.crossplane.io/v1alpha3
@@ -34,14 +40,20 @@ spec:
           addressSpace:
             addressPrefixes: ['192.168.0.0/16']
     patches:
-      - fromFieldPath: spec.clusterRef.id
+      - fromFieldPath: spec.id
         toFieldPath: metadata.labels[app]
-      - fromFieldPath: spec.clusterRef.id
+      - fromFieldPath: spec.id
         toFieldPath: metadata.name
         transforms:
-            - type: string
-              string:
-                fmt: "%s-vnet"
+          - type: string
+            string:
+              fmt: "%s-vnet"
+      - fromFieldPath: spec.id
+        toFieldPath: metadata.annotations[crossplane.io/external-name]
+        transforms:
+          - type: string
+            string:
+              fmt: "%s-vnet"
   - base:
       apiVersion: network.azure.crossplane.io/v1alpha3
       kind: Subnet
@@ -55,11 +67,17 @@ spec:
           serviceEndpoints:
             - service: Microsoft.Sql
     patches:
-      - fromFieldPath: spec.clusterRef.id
+      - fromFieldPath: spec.id
         toFieldPath: metadata.labels[azure.platformref.crossplane.io/app]
-      - fromFieldPath: spec.clusterRef.id
+      - fromFieldPath: spec.id
         toFieldPath: metadata.name
         transforms:
-            - type: string
-              string:
-                fmt: "%s-sn"
+          - type: string
+            string:
+              fmt: "%s-sn"
+      - fromFieldPath: spec.id
+        toFieldPath: metadata.annotations[crossplane.io/external-name]
+        transforms:
+          - type: string
+            string:
+              fmt: "%s-sn"

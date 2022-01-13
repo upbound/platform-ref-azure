@@ -13,16 +13,27 @@ spec:
         apiVersion: compute.azure.crossplane.io/v1alpha3
         kind: AKSCluster
         spec:
-          dnsNamePrefix: platform-ref-azure-cluster
           location: West US 2
           version: "1.21.2"
       patches:
-        - fromFieldPath: metadata.annotations[crossplane.io/external-name]
+        - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-aks"
+        - fromFieldPath: spec.id
           toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-aks"
         - fromFieldPath: spec.id
           toFieldPath: spec.resourceGroupNameSelector.matchLabels[azure.platformref.crossplane.io/app]
         - fromFieldPath: spec.id
           toFieldPath: spec.vnetSubnetIDSelector.matchLabels[azure.platformref.crossplane.io/app]
+        - fromFieldPath: spec.id
+          toFieldPath: spec.dnsNamePrefix
         - fromFieldPath: spec.parameters.nodes.size
           toFieldPath: spec.nodeVMSize
           transforms:
@@ -54,6 +65,10 @@ spec:
       patches:
         - fromFieldPath: spec.id
           toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-helm"
         - fromFieldPath: spec.writeConnectionSecretToRef.namespace
           toFieldPath: spec.credentials.secretRef.namespace
         # This ProviderConfig uses the above AKS cluster's connection secret as

@@ -216,23 +216,9 @@ Crossplane resources use the ProviderConfig named ```default``` if no specific P
 
 ### We are now ready to provision resources:
 
-#### Create Network Fabric
-
-The example network composition includes the creation of a Resource Group, Virtual Network, and Subnets:
-
-```console
-kubectl apply -f examples/network.yaml
-```
-
-Verify status:
-
-```console
-kubectl get claim
-kubectl get composite
-kubectl get managed
-```
-
 #### Create AKS Cluster
+
+The example cluster compposition creates an AKS cluster and includes a nested composite resource for the network, which creates a Resource Group, Virtual Network, and Subnet:
 
 ```console
 kubectl apply -f examples/cluster.yaml
@@ -245,6 +231,8 @@ kubectl get claim
 kubectl get composite
 kubectl get managed
 ```
+
+>_Note: you may see an error similar to this during AKS cluster provisioning: `Error: autorest/azure: Service returned an error. Status=409 Code="RoleAssignmentExists" Message="The role assignment already exists.` This is due to a known issue with the Azure API. The AKS cluster should succesfully provision after Crossplane iterates the reconcile loop a few times._
 
 #### Provision a PostgreSQLInstance using kubectl
 
@@ -259,6 +247,7 @@ kubectl get claim
 kubectl get composite
 kubectl get managed
 ```
+Check your Azure Cloud portal to verify your infrastructure is created. Try changing the CIDR for the subnet and see if it is reconciled to intended state.
 
 ### Cleanup & Uninstall
 
@@ -269,7 +258,6 @@ Delete resources created through the `Control Plane` Configurations menu:
 ```console
 kubectl delete -f examples/postgres-claim.yaml
 kubectl delete -f examples/cluster.yaml
-kubectl delete -f examples/network.yaml
 ```
 
 Verify all underlying resources have been cleanly deleted:
@@ -287,6 +275,8 @@ kubectl delete provider.pkg.crossplane.io crossplane-provider-helm
 ```
 
 ### Uninstall Azure App Registration
+
+_Note: If you plan to continue with the Upbound Cloud exercise below, perform this cleanup step later_
 
 ```console
 AZ_APP_ID=$(az ad sp list --display-name platform-ref-azure)
@@ -317,7 +307,9 @@ az ad sp delete --id $AZ_APP_ID
 
 Create a `Repository` called `platform-ref-azure` in your Upbound Cloud `Organization`:
 
-![Upbound Repository](docs/media/repository.png)
+![](docs/media/2022-01-12-15-56-26.png)
+
+<br>
 
 Set these to match your settings:
 
@@ -330,14 +322,7 @@ REGISTRY=registry.upbound.io
 PLATFORM_CONFIG=${REGISTRY:+$REGISTRY/}${UPBOUND_ORG}/${REPO}:${VERSION_TAG}
 ```
 
-Clone the GitHub repo.
-
-```console
-git clone https://github.com/upbound/platform-ref-azure.git
-cd platform-ref-azure
-```
-
-Login to your container registry.
+Login to your container registry. _(Your password is the same as Upbound Cloud login.)_
 
 ```console
 docker login ${REGISTRY} -u ${UPBOUND_ACCOUNT_EMAIL}
@@ -355,11 +340,8 @@ Push package to registry.
 up xpkg push ${PLATFORM_CONFIG} -f platform-ref-azure.xpkg
 ```
 
-Install package into an Upbound `Control Plane` instance.
+![](docs/media/2022-01-12-16-04-13.png)
 
-```console
-kubectl crossplane install configuration ${PLATFORM_CONFIG}
-```
 
 The Azure cloud service primitives that can be used in a `Composition` today are
 listed in the [Crossplane Azure Provider

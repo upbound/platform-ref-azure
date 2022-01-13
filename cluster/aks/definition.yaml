@@ -7,9 +7,6 @@ spec:
   names:
     kind: XAKS
     plural: xaks
-  claimNames:
-    kind: AKS
-    plural: aks
   connectionSecretKeys:
   - kubeconfig
   versions:
