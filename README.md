@@ -319,7 +319,7 @@ az ad sp delete --id $AZ_APP_ID
   * [definition.yaml](cluster/services/definition.yaml)
   * [composition.yaml](cluster/services/composition.yaml) includes:
     * `Release` Install Prometheus with the Helm provider Release API
-* `PostgreSQLInstance` - provision an Azure Database for PostgreSQL instance that securely connects to a `Cluster`
+* `PostgreSQLInstance` - provision an Azure Database for PostgreSQL instance that securely connects to a 
   * [definition.yaml](database/postgres/definition.yaml)
   * [composition.yaml](database/postgres/composition.yaml) includes:
     * `PostgreSQLServer`
