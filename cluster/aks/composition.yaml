@@ -76,6 +76,4 @@ spec:
               string:
                 fmt: "%s-aks"
       readinessChecks:
-        - type: MatchString
-          fieldPath: status.atProvider.state
-          matchString: "deployed"
+        - type: None
