@@ -26,11 +26,21 @@ spec:
             capacity: 2
             family: Gen5  
     patches:
+    - fromFieldPath: spec.parameters.clusterRef.id
+      toFieldPath: metadata.name
+      transforms:
+        - type: string
+          string:
+            fmt: "%s-postgresql"
+    - fromFieldPath: spec.parameters.clusterRef.id
+      toFieldPath: metadata.annotations[crossplane.io/external-name]
+      transforms:
+        - type: string
+          string:
+            fmt: "%s-postgresql"
     - fromFieldPath: spec.claimRef.namespace
       toFieldPath: spec.writeConnectionSecretToRef.namespace
-    - fromFieldPath: metadata.name
-      toFieldPath: metadata.name
-    - fromFieldPath: "metadata.uid"
+    - fromFieldPath: "spec.parameters.clusterRef.id"
       toFieldPath: "spec.writeConnectionSecretToRef.name"
       transforms:
       - type: string
@@ -58,8 +68,18 @@ spec:
         serverNameSelector:
           matchControllerRef: true
     patches:
-    - fromFieldPath: metadata.name
+    - fromFieldPath: spec.parameters.clusterRef.id
       toFieldPath: metadata.name
+      transforms:
+        - type: string
+          string:
+            fmt: "%s-sn-rule"
+    - fromFieldPath: spec.parameters.clusterRef.id
+      toFieldPath: metadata.annotations[crossplane.io/external-name]
+      transforms:
+        - type: string
+          string:
+            fmt: "%s-sn-rule"
     - fromFieldPath: spec.parameters.clusterRef.id
       toFieldPath: spec.properties.virtualNetworkSubnetIdSelector.matchLabels[azure.platformref.crossplane.io/app]
     - fromFieldPath: spec.parameters.clusterRef.id

@@ -90,6 +90,19 @@ Kubernetes API endpoint that can be accessed via `kubectl` or CI/CD systems.
 
 #### Create a Hosted UXP Control Plane in Upbound Cloud
 
+Install the `up` cli:
+
+`up` is the official CLI for interacting with Upbound Cloud and Universal Crossplane (UXP).
+
+There are multiple ways to [install up cli](https://cloud.upbound.io/docs/cli/#install-script),
+including Homebrew and Linux packages.
+
+```console
+curl -sL https://cli.upbound.io | sh
+
+up login
+```
+
 1. Create a `Control Plane` in Upbound Cloud (e.g. dev, staging, or prod).
 1. Connect `kubectl` to your `Control Plane` instance.
    * Click on your Control Plane
@@ -102,7 +115,7 @@ Kubernetes API endpoint that can be accessed via `kubectl` or CI/CD systems.
 The other option is installing UXP into a Kubernetes cluster you manage using `up`, which
 is the official CLI for interacting with Upbound Cloud and Universal Crossplane (UXP).
 
-There are multiple ways to [install up](https://cloud.upbound.io/docs/cli/#install-script),
+There are multiple ways to [install up cli](https://cloud.upbound.io/docs/cli/#install-script),
 including Homebrew and Linux packages.
 
 ```console
@@ -216,23 +229,9 @@ Crossplane resources use the ProviderConfig named ```default``` if no specific P
 
 ### We are now ready to provision resources:
 
-#### Create Network Fabric
-
-The example network composition includes the creation of a Resource Group, Virtual Network, and Subnets:
-
-```console
-kubectl apply -f examples/network.yaml
-```
-
-Verify status:
-
-```console
-kubectl get claim
-kubectl get composite
-kubectl get managed
-```
-
 #### Create AKS Cluster
+
+The example cluster compposition creates an AKS cluster and includes a nested composite resource for the network, which creates a Resource Group, Virtual Network, and Subnet:
 
 ```console
 kubectl apply -f examples/cluster.yaml
@@ -245,6 +244,8 @@ kubectl get claim
 kubectl get composite
 kubectl get managed
 ```
+
+>_Note: you may see an error similar to this during AKS cluster provisioning: `Error: autorest/azure: Service returned an error. Status=409 Code="RoleAssignmentExists" Message="The role assignment already exists.` This is due to a known issue with the Azure API. The AKS cluster should succesfully provision after Crossplane iterates the reconcile loop a few times._
 
 #### Provision a PostgreSQLInstance using kubectl
 
@@ -259,6 +260,7 @@ kubectl get claim
 kubectl get composite
 kubectl get managed
 ```
+Check your Azure Cloud portal to verify your infrastructure is created. Try changing the CIDR for the subnet and see if it is reconciled to intended state.
 
 ### Cleanup & Uninstall
 
@@ -269,7 +271,6 @@ Delete resources created through the `Control Plane` Configurations menu:
 ```console
 kubectl delete -f examples/postgres-claim.yaml
 kubectl delete -f examples/cluster.yaml
-kubectl delete -f examples/network.yaml
 ```
 
 Verify all underlying resources have been cleanly deleted:
@@ -288,6 +289,8 @@ kubectl delete provider.pkg.crossplane.io crossplane-provider-helm
 
 ### Uninstall Azure App Registration
 
+_Note: If you plan to continue testing with the Azure provider, perform this cleanup step later_
+
 ```console
 AZ_APP_ID=$(az ad sp list --display-name platform-ref-azure)
 az ad sp delete --id $AZ_APP_ID
@@ -298,16 +301,25 @@ az ad sp delete --id $AZ_APP_ID
 * `Cluster` - provision a fully configured AKS cluster
   * [definition.yaml](cluster/definition.yaml)
   * [composition.yaml](cluster/composition.yaml) includes (transitively):
-    * `AKSCluster`
-    * `HelmReleases` for Prometheus and other cluster services.
-* `Network` - fabric for a `Cluster` to securely connect to Data Services and
+    * `XAKS` for AKS cluster.
+    * `XNetwork` for network fabric.
+    * `XServices` for Prometheus and other cluster services.
+* `XAKS` Creates AKS cluster.
+  * [definition.yaml](cluster/aks/definition.yaml)
+  * [composition.yaml](cluster/aks/composition.yaml) includes:
+    * `AKSCluster` for Azure AKS cluster.
+* `XNetwork` - fabric for a `Cluster` to securely connect to Data Services and
   the Internet.
-  * [definition.yaml](network/definition.yaml)
-  * [composition.yaml](network/composition.yaml) includes:
-    * `ResourceGroup`
-    * `VirtualNetwork`
-    * `Subnet`
-* `PostgreSQLInstance` - provision an Azure Database for PostgreSQL instance that securely connects to a `Cluster`
+  * [definition.yaml](cluster/network/definition.yaml)
+  * [composition.yaml](cluster/network/composition.yaml) includes:
+      * `ResourceGroup` Azure API.
+      * `VirtualNetwork` Azure API.
+      * `Subnet` Azure API.
+* `XServices`
+  * [definition.yaml](cluster/services/definition.yaml)
+  * [composition.yaml](cluster/services/composition.yaml) includes:
+    * `Release` Install Prometheus with the Helm provider Release API
+* `PostgreSQLInstance` - provision an Azure Database for PostgreSQL instance that securely connects to a 
   * [definition.yaml](database/postgres/definition.yaml)
   * [composition.yaml](database/postgres/composition.yaml) includes:
     * `PostgreSQLServer`
@@ -317,7 +329,9 @@ az ad sp delete --id $AZ_APP_ID
 
 Create a `Repository` called `platform-ref-azure` in your Upbound Cloud `Organization`:
 
-![Upbound Repository](docs/media/repository.png)
+![](docs/media/repository-empty.png)
+
+<br>
 
 Set these to match your settings:
 
@@ -330,14 +344,7 @@ REGISTRY=registry.upbound.io
 PLATFORM_CONFIG=${REGISTRY:+$REGISTRY/}${UPBOUND_ORG}/${REPO}:${VERSION_TAG}
 ```
 
-Clone the GitHub repo.
-
-```console
-git clone https://github.com/upbound/platform-ref-azure.git
-cd platform-ref-azure
-```
-
-Login to your container registry.
+Login to your container registry. _(Your password is the same as Upbound Cloud login.)_
 
 ```console
 docker login ${REGISTRY} -u ${UPBOUND_ACCOUNT_EMAIL}
@@ -355,11 +362,8 @@ Push package to registry.
 up xpkg push ${PLATFORM_CONFIG} -f platform-ref-azure.xpkg
 ```
 
-Install package into an Upbound `Control Plane` instance.
+![](docs/media/pushToRepo.png)
 
-```console
-kubectl crossplane install configuration ${PLATFORM_CONFIG}
-```
 
 The Azure cloud service primitives that can be used in a `Composition` today are
 listed in the [Crossplane Azure Provider

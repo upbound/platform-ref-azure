@@ -15,7 +15,7 @@ metadata:
           path: ".spec.id"
           title: Cluster Ref Name
           description: Cluster ID that other objects will use to refer to this cluster
-          default: platform-ref-azure-cluster
+          default: platform-ref-azure
           validation:
           - required: true
             customError: Cluster ID is required.
@@ -65,7 +65,7 @@ metadata:
           path: ".spec.parameters.services.operators.prometheus.version"
           title: Prometheus Chart Version
           description: The version of kube-prometheus-stack chart to install
-          default: 10.1.0
+          default: 15.0.1
           validation:
           - required: false
 spec:

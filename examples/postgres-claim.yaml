@@ -4,8 +4,8 @@ metadata:
   name: platform-ref-azure-db
 spec:
   parameters:
-    storageGB: 20 #Minimum value is 5
+    storageGB: 5 #Minimum value is 5
     clusterRef:
-      id: platform-ref-azure #This field should match the cluster composite resource spec.id field
+      id: platform-ref-azure #This field must match the cluster XR spec.id
   writeConnectionSecretToRef:
-    name: platform-ref-azure-db-conn
+    name: platform-ref-azure-db-conn #Must be unique for each instance

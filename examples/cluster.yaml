@@ -3,14 +3,14 @@ kind: Cluster
 metadata:
   name: platform-ref-azure
 spec:
-  id: platform-ref-azure #This field is used as a reference match for network and database composite resources via clusterRef.id
+  id: platform-ref-azure
   parameters:
     nodes:
-      count: 1
-      size: medium
+      count: 1 #1-100
+      size: small #small/medium/large
     services:
       operators:
         prometheus:
           version: "15.0.1"
   writeConnectionSecretToRef:
-    name: platform-ref-azure
+    name: platform-ref-azure-kubeconfig #Must be unique for each instance
