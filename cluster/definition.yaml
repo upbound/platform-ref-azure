@@ -15,7 +15,7 @@ metadata:
           path: ".spec.id"
           title: Cluster Ref Name
           description: Cluster ID that other objects will use to refer to this cluster
-          default: platform-ref-azure-cluster
+          default: platform-ref-azure
           validation:
           - required: true
             customError: Cluster ID is required.

@@ -1,11 +1,11 @@
 apiVersion: azure.platformref.crossplane.io/v1alpha1
 kind: PostgreSQLInstance
 metadata:
-  name: nate-platform-ref-azure-db
+  name: platform-ref-azure-db
 spec:
   parameters:
     storageGB: 5 #Minimum value is 5
     clusterRef:
-      id: nate-platform-ref-azure #This field must match the cluster XR spec.id
+      id: platform-ref-azure #This field must match the cluster XR spec.id
   writeConnectionSecretToRef:
     name: platform-ref-azure-db-conn #Must be unique for each instance

@@ -90,6 +90,19 @@ Kubernetes API endpoint that can be accessed via `kubectl` or CI/CD systems.
 
 #### Create a Hosted UXP Control Plane in Upbound Cloud
 
+Install the `up` cli:
+
+`up` is the official CLI for interacting with Upbound Cloud and Universal Crossplane (UXP).
+
+There are multiple ways to [install up cli](https://cloud.upbound.io/docs/cli/#install-script),
+including Homebrew and Linux packages.
+
+```console
+curl -sL https://cli.upbound.io | sh
+
+up login
+```
+
 1. Create a `Control Plane` in Upbound Cloud (e.g. dev, staging, or prod).
 1. Connect `kubectl` to your `Control Plane` instance.
    * Click on your Control Plane
@@ -102,7 +115,7 @@ Kubernetes API endpoint that can be accessed via `kubectl` or CI/CD systems.
 The other option is installing UXP into a Kubernetes cluster you manage using `up`, which
 is the official CLI for interacting with Upbound Cloud and Universal Crossplane (UXP).
 
-There are multiple ways to [install up](https://cloud.upbound.io/docs/cli/#install-script),
+There are multiple ways to [install up cli](https://cloud.upbound.io/docs/cli/#install-script),
 including Homebrew and Linux packages.
 
 ```console
@@ -276,7 +289,7 @@ kubectl delete provider.pkg.crossplane.io crossplane-provider-helm
 
 ### Uninstall Azure App Registration
 
-_Note: If you plan to continue with the Upbound Cloud exercise below, perform this cleanup step later_
+_Note: If you plan to continue testing with the Azure provider, perform this cleanup step later_
 
 ```console
 AZ_APP_ID=$(az ad sp list --display-name platform-ref-azure)
@@ -288,15 +301,24 @@ az ad sp delete --id $AZ_APP_ID
 * `Cluster` - provision a fully configured AKS cluster
   * [definition.yaml](cluster/definition.yaml)
   * [composition.yaml](cluster/composition.yaml) includes (transitively):
-    * `AKSCluster`
-    * `HelmReleases` for Prometheus and other cluster services.
-* `Network` - fabric for a `Cluster` to securely connect to Data Services and
+    * `XAKS` for AKS cluster.
+    * `XNetwork` for network fabric.
+    * `XServices` for Prometheus and other cluster services.
+* `XAKS` Creates AKS cluster.
+  * [definition.yaml](cluster/aks/definition.yaml)
+  * [composition.yaml](cluster/aks/composition.yaml) includes:
+    * `AKSCluster` for Azure AKS cluster.
+* `XNetwork` - fabric for a `Cluster` to securely connect to Data Services and
   the Internet.
-  * [definition.yaml](network/definition.yaml)
-  * [composition.yaml](network/composition.yaml) includes:
-    * `ResourceGroup`
-    * `VirtualNetwork`
-    * `Subnet`
+  * [definition.yaml](cluster/network/definition.yaml)
+  * [composition.yaml](cluster/network/composition.yaml) includes:
+      * `ResourceGroup` Azure API.
+      * `VirtualNetwork` Azure API.
+      * `Subnet` Azure API.
+* `XServices`
+  * [definition.yaml](cluster/services/definition.yaml)
+  * [composition.yaml](cluster/services/composition.yaml) includes:
+    * `Release` Install Prometheus with the Helm provider Release API
 * `PostgreSQLInstance` - provision an Azure Database for PostgreSQL instance that securely connects to a `Cluster`
   * [definition.yaml](database/postgres/definition.yaml)
   * [composition.yaml](database/postgres/composition.yaml) includes:
@@ -307,7 +329,7 @@ az ad sp delete --id $AZ_APP_ID
 
 Create a `Repository` called `platform-ref-azure` in your Upbound Cloud `Organization`:
 
-![](docs/media/2022-01-12-15-56-26.png)
+![](docs/media/repository-empty.png)
 
 <br>
 
@@ -340,7 +362,7 @@ Push package to registry.
 up xpkg push ${PLATFORM_CONFIG} -f platform-ref-azure.xpkg
 ```
 
-![](docs/media/2022-01-12-16-04-13.png)
+![](docs/media/pushToRepo.png)
 
 
 The Azure cloud service primitives that can be used in a `Composition` today are

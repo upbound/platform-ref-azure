@@ -34,6 +34,8 @@ spec:
         kind: XServices
       patches:
         - fromFieldPath: spec.id
+          toFieldPath: metadata.name
+        - fromFieldPath: spec.id
           toFieldPath: spec.providerConfigRef.name
         - fromFieldPath: spec.parameters.services.operators.prometheus.version
           toFieldPath: spec.operators.prometheus.version

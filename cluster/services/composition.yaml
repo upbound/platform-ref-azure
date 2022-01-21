@@ -1,14 +1,14 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: services.azure.platformref.crossplane.io
+  name: xservices.azure.platformref.crossplane.io
   labels:
     plan: full
     provider: helm
 spec:
   compositeTypeRef:
     apiVersion: azure.platformref.crossplane.io/v1alpha1
-    kind: Services
+    kind: XServices
   resources:
     - base:
         apiVersion: helm.crossplane.io/v1beta1
@@ -22,9 +22,15 @@ spec:
               # Note that default values are overridden by the patches below.
               name: prometheus
               repository: https://prometheus-community.github.io/helm-charts
-              version: "15.0.1"
+              version: "15.0.2"
             values: {}
       patches:
+        - fromFieldPath: metadata.name
+          toFieldPath: metadata.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-prometheus"
         # All Helm releases derive their labels and annotations from the XR.
         - fromFieldPath: metadata.labels
           toFieldPath: metadata.labels

@@ -65,10 +65,6 @@ spec:
       patches:
         - fromFieldPath: spec.id
           toFieldPath: metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%s-helm"
         - fromFieldPath: spec.writeConnectionSecretToRef.namespace
           toFieldPath: spec.credentials.secretRef.namespace
         # This ProviderConfig uses the above AKS cluster's connection secret as
@@ -79,3 +75,7 @@ spec:
             - type: string
               string:
                 fmt: "%s-aks"
+      readinessChecks:
+        - type: MatchString
+          fieldPath: status.atProvider.state
+          matchString: "deployed"
