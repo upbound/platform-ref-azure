@@ -32,16 +32,16 @@ jobs:
           username: ${{ secrets.UPBOUND_ROBOT_USR }}
           password: ${{ secrets.UPBOUND_ROBOT_PSW }}
       - name: Build
-        uses: crossplane-contrib/xpkg-action@v0.1.0
+        uses: crossplane-contrib/xpkg-action@v0.2.0
         with:
           channel: stable
           version: current
           command: build configuration -f ${{ github.workspace }} --name package.xpkg --ignore '.github/*,.github/*/*,examples/*,hack/*'
       - name: Push
-        uses: crossplane-contrib/xpkg-action@v0.1.0
+        uses: crossplane-contrib/xpkg-action@v0.2.0
         with:
           command: push configuration -f package.xpkg registry.upbound.io/upbound/platform-ref-azure:${{ steps.tagger.outputs.VERSION_TAG }}
       - name: Push Latest
-        uses: crossplane-contrib/xpkg-action@v0.1.0
+        uses: crossplane-contrib/xpkg-action@v0.2.0
         with:
-          command: push configuration -f package.xpkg registry.upbound.io/upbound/platform-ref-azure
+          command: push configuration -f package.xpkg registry.upbound.io/upbound/platform-ref-awazures
