@@ -44,4 +44,4 @@ jobs:
       - name: Push Latest
         uses: crossplane-contrib/xpkg-action@v0.2.0
         with:
-          command: push configuration -f package.xpkg registry.upbound.io/upbound/platform-ref-awazures
+          command: push configuration -f package.xpkg registry.upbound.io/upbound/platform-ref-azure
