@@ -154,7 +154,7 @@ cp kubectl-crossplane /usr/local/bin
 
 ```console
 # Check the latest version available in https://cloud.upbound.io/registry/upbound/platform-ref-azure
-PLATFORM_VERSION=v0.1.0
+PLATFORM_VERSION=v0.3.0
 PLATFORM_CONFIG=registry.upbound.io/upbound/platform-ref-azure:${PLATFORM_VERSION}
 
 kubectl crossplane install configuration ${PLATFORM_CONFIG}
