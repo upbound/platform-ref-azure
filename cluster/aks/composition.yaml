@@ -14,7 +14,7 @@ spec:
         kind: AKSCluster
         spec:
           location: West US 2
-          version: "1.21.2"
+          version: "1.21.7"
       patches:
         - fromFieldPath: spec.id
           toFieldPath: metadata.name
