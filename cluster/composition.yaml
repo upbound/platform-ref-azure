@@ -1,20 +1,20 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: xclusters.azure.platformref.crossplane.io
+  name: xclusters.azure.platformref.upbound.io
 spec:
   compositeTypeRef:
-    apiVersion: azure.platformref.crossplane.io/v1alpha1
+    apiVersion: azure.platformref.upbound.io/v1alpha1
     kind: XCluster
   resources:
     - base:
-        apiVersion: azure.platformref.crossplane.io/v1alpha1
+        apiVersion: azure.platformref.upbound.io/v1alpha1
         kind: XNetwork
       patches:
         - fromFieldPath: spec.id
           toFieldPath: spec.id
     - base:
-        apiVersion: azure.platformref.crossplane.io/v1alpha1
+        apiVersion: azure.platformref.upbound.io/v1alpha1
         kind: XAKS
       connectionDetails:
         - fromConnectionSecretKey: kubeconfig
@@ -30,7 +30,7 @@ spec:
         - fromFieldPath: spec.parameters.nodes.size
           toFieldPath: spec.parameters.nodes.size
     - base:
-        apiVersion: azure.platformref.crossplane.io/v1alpha1
+        apiVersion: azure.platformref.upbound.io/v1alpha1
         kind: XServices
       patches:
         - fromFieldPath: spec.id
