@@ -3,13 +3,13 @@
 This repository contains a reference Azure Platform
 [Configuration](https://crossplane.io/docs/v1.6/getting-started/create-configuration.html)
 for use as a starting point in [Upbound Cloud](https://upbound.io) or
-[Upbound Universal Crossplane (UXP)](https://www.upbound.io/uxp/) to build,
+[Upbound Universal Crossplane (UXP)](https://www.upbound.io/products/universal-crossplane) to build,
 run and operate your own internal cloud platform and offer a self-service
 console and API to your internal teams. It provides platform APIs to provision
 fully configured Azure AKS clusters, with secure networking, and stateful cloud
 services (Azure Database for PostgreSQL) designed to securely connect to the nodes in each AKS cluster --
 all composed using cloud service primitives from the [Crossplane Azure
-Provider](https://doc.crds.dev/github.com/crossplane/provider-azure). App
+Provider](https://marketplace.upbound.io/providers/upbound/provider-azure). App
 deployments can securely connect to the infrastructure they need using secrets
 distributed directly to the app namespace.
 
@@ -35,7 +35,7 @@ provision the infrastructure they need using a custom cloud console, `kubectl`,
 or deployment pipelines and GitOps workflows -- all without writing code?
 
 [Upbound Cloud](https://upbound.io) enables you to do just that, powered by the
-open source [Upbound Universal Crossplane](https://www.upbound.io/uxp/) project.
+open source [Upbound Universal Crossplane](https://www.upbound.io/products/universal-crossplane) project.
 
 Consistent self-service APIs can be provided across dev, staging, and
 production environments, making it easy for app teams to get the infrastructure
@@ -63,7 +63,7 @@ Crossplane `Providers` include the cloud service primitives (AWS, Azure, GCP,
 Alibaba) used in a `Composition`.
 
 Learn more about `Composition` in the [Crossplane
-Docs](https://crossplane.io/docs/v1.6/concepts/composition.html).
+Docs](https://crossplane.io/docs/v1.9/concepts/composition.html).
 
 ## Quick Start
 
@@ -234,7 +234,7 @@ Crossplane resources use the ProviderConfig named ```default``` if no specific P
 The example cluster compposition creates an AKS cluster and includes a nested composite resource for the network, which creates a Resource Group, Virtual Network, and Subnet:
 
 ```console
-kubectl apply -f examples/cluster.yaml
+kubectl apply -f examples/cluster-claim.yaml
 ```
 
 verify status:
@@ -270,7 +270,7 @@ Delete resources created through the `Control Plane` Configurations menu:
 
 ```console
 kubectl delete -f examples/postgres-claim.yaml
-kubectl delete -f examples/cluster.yaml
+kubectl delete -f examples/cluster-claim.yaml
 ```
 
 Verify all underlying resources have been cleanly deleted:
@@ -319,7 +319,7 @@ az ad sp delete --id $AZ_APP_ID
   * [definition.yaml](cluster/services/definition.yaml)
   * [composition.yaml](cluster/services/composition.yaml) includes:
     * `Release` Install Prometheus with the Helm provider Release API
-* `PostgreSQLInstance` - provision an Azure Database for PostgreSQL instance that securely connects to a 
+* `PostgreSQLInstance` - provision an Azure Database for PostgreSQL instance that securely connects to a
   * [definition.yaml](database/postgres/definition.yaml)
   * [composition.yaml](database/postgres/composition.yaml) includes:
     * `PostgreSQLServer`

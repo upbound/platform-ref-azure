@@ -89,7 +89,7 @@ spec:
   crossplane:
     version: ">=v1.0.0-0"
   dependsOn:
-    - provider: registry.upbound.io/crossplane/provider-azure
-      version: ">=v0.18.1-0"
+    - provider: xpkg.upbound.io/upbound/provider-azure:v0.11.0
+      version: ">=v0.11.0"
     - provider: registry.upbound.io/crossplane/provider-helm
       version: ">=v0.9.0"
