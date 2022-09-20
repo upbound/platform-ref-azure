@@ -1,0 +1,6 @@
+apiVersion: azure.platformref.upbound.io/v1alpha1
+kind: XNetwork
+metadata:
+  name: ref-azure-network
+spec:
+  id: ref-azure-network-from-xr

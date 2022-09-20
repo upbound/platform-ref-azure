@@ -8,7 +8,7 @@ run and operate your own internal cloud platform and offer a self-service
 console and API to your internal teams. It provides platform APIs to provision
 fully configured Azure AKS clusters, with secure networking, and stateful cloud
 services (Azure Database for PostgreSQL) designed to securely connect to the nodes in each AKS cluster --
-all composed using cloud service primitives from the [Crossplane Azure
+all composed using cloud service primitives from the [Upbound Official Azure
 Provider](https://marketplace.upbound.io/providers/upbound/provider-azure). App
 deployments can securely connect to the infrastructure they need using secrets
 distributed directly to the app namespace.
@@ -140,92 +140,17 @@ Validate the install using the following command:
 kubectl get all -n upbound-system
 ```
 
-#### Install the Crossplane kubectl extension (for convenience)
-
-Now that your kubectl context is configured to connect to a UXP Control Plane,
-we can install this reference platform as a Crossplane package.
-
-```console
-curl -sL https://raw.githubusercontent.com/crossplane/crossplane/master/install.sh | sh
-cp kubectl-crossplane /usr/local/bin
-```
-
 #### Install the Platform Configuration
 
 ```console
-# Check the latest version available in https://cloud.upbound.io/registry/upbound/platform-ref-azure
-PLATFORM_VERSION=v0.3.0
-PLATFORM_CONFIG=registry.upbound.io/upbound/platform-ref-azure:${PLATFORM_VERSION}
-
-kubectl crossplane install configuration ${PLATFORM_CONFIG}
+# Check the latest version available in https://marketplace.upbound.io/configurations/upbound/platform-ref-azure/
+kubectl apply -f examples/configuration.yaml
 kubectl get pkg
 ```
 
 #### Configure Providers in your Platform
 
-A `ProviderConfig` is used to configure Cloud Provider API credentials. Multiple
-`ProviderConfig`s can be created, each one pointing to a different credential.
-
-In order to manage resources in Azure, you must provide credentials for an Azure service principal that Crossplane can use to authenticate. This assumes that you have already set up the Azure CLI client with your credentials.
-
-Create a JSON file that contains all the information needed to connect and authenticate to Azure:
-
-```console
-# Create service principal with Owner role
-az ad sp create-for-rbac --sdk-auth --role Owner --name platform-ref-azure > crossplane-azure-provider-key.json
-```
-
-Take note of the `clientID` value from the JSON file that we just created, and save it to an environment variable:
-
-```console
-export AZURE_CLIENT_ID=<clientId value from json file>
-```
-
-Now add and grant the required permissions to the service principal that will allow it to manage the necessary resources in Azure:
-
-```console
-# add required Azure Active Directory permissions
-az ad app permission add --id ${AZURE_CLIENT_ID} --api 00000002-0000-0000-c000-000000000000 --api-permissions 1cda74f2-2616-4834-b122-5cb1b07f8a59=Role 78c8a3c8-a07e-4b9e-af1b-b5ccab50a175=Role
-
-# grant (activate) the permissions
-az ad app permission grant --id ${AZURE_CLIENT_ID} --api 00000002-0000-0000-c000-000000000000 --expires never
-```
-
-You might see an error similar to the following, but that is OK, the permissions should have gone through still:
-
-_Operation failed with status: 'Conflict'. Details: 409 Client Error: Conflict for url: https://graph.windows.net/e7985bc4-a3b3-4f37-b9d2-fa256023b1ae/oauth2PermissionGrants?api-version=1.6_
-
-Finally, you need to grant admin permissions on the Azure Active Directory to the service principal because it will need to create other service principals for your AKSCluster:
-
-```console
-# grant admin consent to the service princinpal you created
-az ad app permission admin-consent --id "${AZURE_CLIENT_ID}"
-```
-
-_Note: You might need Global Administrator role to Grant admin consent for Default Directory. Please contact the administrator of your Azure subscription. To check your role, go to Azure Active Directory -> Roles and administrators. You can find your role(s) by clicking on Your Role (Preview)_
-
-After these steps are completed, you should have the following file on your local filesystem:
-
-- crossplane-azure-provider-key.json
-
-#### Setup Azure ProviderConfig
-
-Before creating any resources, we need to create and configure an Azure cloud provider resource in Crossplane, which stores the cloud account information in it. All the requests from Crossplane to Azure Cloud will use the credentials attached to this provider resource. The following command assumes that you have a crossplane-azure-provider-key.json file that belongs to the account you’d like Crossplane to use.
-
-Now we’ll create our Secret that contains the credential and ProviderConfig resource that refers to that secret:
-
-```console
-kubectl create secret generic azure-account-creds -n upbound-system --from-file=credentials=./crossplane-azure-provider-key.json
-kubectl apply -f examples/azure-default-provider.yaml
-```
-
-The output will look like the following:
-
-```shell
-provider.azure.crossplane.io/default created
-```
-
-Crossplane resources use the ProviderConfig named ```default``` if no specific ProviderConfig is specified, so this ProviderConfig will be the default for all Azure resources.
+Refer to [official marketplace documentation](https://marketplace.upbound.io/providers/upbound/provider-azure/v0.13.0/docs/quickstart)
 
 ### We are now ready to provision resources:
 
@@ -340,7 +265,7 @@ UPBOUND_ORG=acme
 UPBOUND_ACCOUNT_EMAIL=me@acme.com
 REPO=platform-ref-azure
 VERSION_TAG=v0.1.0
-REGISTRY=registry.upbound.io
+REGISTRY=xpkg.upbound.io
 PLATFORM_CONFIG=${REGISTRY:+$REGISTRY/}${UPBOUND_ORG}/${REPO}:${VERSION_TAG}
 ```
 
@@ -353,7 +278,7 @@ docker login ${REGISTRY} -u ${UPBOUND_ACCOUNT_EMAIL}
 Build package.
 
 ```console
-up xpkg build --name platform-ref-azure.xpkg --ignore ".github/workflows/*,examples/*,hack/*" 
+up xpkg build --name platform-ref-azure.xpkg --ignore ".github/workflows/*,hack/*"
 ```
 
 Push package to registry.
@@ -366,11 +291,11 @@ up xpkg push ${PLATFORM_CONFIG} -f platform-ref-azure.xpkg
 
 
 The Azure cloud service primitives that can be used in a `Composition` today are
-listed in the [Crossplane Azure Provider
-Docs](https://doc.crds.dev/github.com/crossplane/provider-azure).
+listed in the [Upbound Official Azure Provider
+Docs](https://marketplace.upbound.io/providers/upbound/provider-azure/).
 
 To learn more see [Configuration
-Packages](https://crossplane.io/docs/v0.13/getting-started/package-infrastructure.html).
+Packages](https://crossplane.io/docs/v1.9/concepts/packages.html#configuration-packages).
 
 ## What's Next
 
