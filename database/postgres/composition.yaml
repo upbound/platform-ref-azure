@@ -1,30 +1,30 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: xpostgresqlinstances.azure.platformref.crossplane.io
+  name: xpostgresqlinstances.azure.platformref.upbound.io
   labels:
     provider: azure
 spec:
   compositeTypeRef:
-    apiVersion: azure.platformref.crossplane.io/v1alpha1
+    apiVersion: azure.platformref.upbound.io/v1alpha1
     kind: XPostgreSQLInstance
   resources:
   - name: postgresqlserver
     base:
-      apiVersion: database.azure.crossplane.io/v1beta1
-      kind: PostgreSQLServer
+      apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
+      kind: Server
       spec:
         forProvider:
           version: "11"
-          administratorLogin: myadmin
+          administratorLogin: psqladmin
           location: West US 2
-          sslEnforcement: Disabled
-          storageProfile:
-              storageMB: 5120
-          sku:
-            tier: GeneralPurpose
-            capacity: 2
-            family: Gen5  
+          skuName: GP_Gen5_2
+          storageMb: 5120
+          sslEnforcementEnabled: true
+          identity:
+          - type: SystemAssigned
+          # due to: https://github.com/Azure/azure-rest-api-specs/issues/9571
+          infrastructureEncryptionEnabled: false
     patches:
     - fromFieldPath: spec.parameters.clusterRef.id
       toFieldPath: metadata.name
@@ -32,28 +32,28 @@ spec:
         - type: string
           string:
             fmt: "%s-postgresql"
-    - fromFieldPath: spec.parameters.clusterRef.id
-      toFieldPath: metadata.annotations[crossplane.io/external-name]
-      transforms:
-        - type: string
-          string:
-            fmt: "%s-postgresql"
     - fromFieldPath: spec.claimRef.namespace
       toFieldPath: spec.writeConnectionSecretToRef.namespace
-    - fromFieldPath: "spec.parameters.clusterRef.id"
-      toFieldPath: "spec.writeConnectionSecretToRef.name"
+    - fromFieldPath: spec.parameters.clusterRef.id
+      toFieldPath: spec.writeConnectionSecretToRef.name
       transforms:
       - type: string
         string:
           fmt: "%s-postgresql"
-    - fromFieldPath: "spec.parameters.storageGB"
-      toFieldPath: "spec.forProvider.storageProfile.storageMB"
+    - fromFieldPath: spec.parameters.storageGB
+      toFieldPath: spec.forProvider.storageMb
       transforms:
       - type: math
         math:
           multiply: 1024
     - fromFieldPath: spec.parameters.clusterRef.id
-      toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.crossplane.io/app]
+      toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.upbound.io/app]
+    - fromFieldPath: spec.parameters.passwordSecretRef.namespace
+      toFieldPath: spec.forProvider.administratorLoginPasswordSecretRef.namespace
+    - fromFieldPath: spec.parameters.passwordSecretRef.name
+      toFieldPath: spec.forProvider.administratorLoginPasswordSecretRef.name
+    - fromFieldPath: spec.parameters.passwordSecretRef.key
+      toFieldPath: spec.forProvider.administratorLoginPasswordSecretRef.key
     connectionDetails:
         - fromConnectionSecretKey: username
         - fromConnectionSecretKey: password
@@ -62,11 +62,12 @@ spec:
   # db-server vnet-rule for subnet where AKS lives in
   - name: vnetrule
     base:
-      apiVersion: database.azure.crossplane.io/v1alpha3
-      kind: PostgreSQLServerVirtualNetworkRule
+      apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
+      kind: VirtualNetworkRule
       spec:
-        serverNameSelector:
-          matchControllerRef: true
+        forProvider:
+          serverNameSelector:
+            matchControllerRef: true
     patches:
     - fromFieldPath: spec.parameters.clusterRef.id
       toFieldPath: metadata.name
@@ -75,12 +76,6 @@ spec:
           string:
             fmt: "%s-sn-rule"
     - fromFieldPath: spec.parameters.clusterRef.id
-      toFieldPath: metadata.annotations[crossplane.io/external-name]
-      transforms:
-        - type: string
-          string:
-            fmt: "%s-sn-rule"
+      toFieldPath: spec.forProvider.subnetIdSelector.matchLabels[azure.platformref.upbound.io/app]
     - fromFieldPath: spec.parameters.clusterRef.id
-      toFieldPath: spec.properties.virtualNetworkSubnetIdSelector.matchLabels[azure.platformref.crossplane.io/app]
-    - fromFieldPath: spec.parameters.clusterRef.id
-      toFieldPath: spec.resourceGroupNameSelector.matchLabels[azure.platformref.crossplane.io/app]
+      toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.upbound.io/app]

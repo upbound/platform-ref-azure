@@ -1,19 +1,20 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: xnetworks.azure.platformref.crossplane.io
+  name: xnetworks.azure.platformref.upbound.io
   labels:
     provider: azure
 spec:
   compositeTypeRef:
-    apiVersion: azure.platformref.crossplane.io/v1alpha1
+    apiVersion: azure.platformref.upbound.io/v1alpha1
     kind: XNetwork
   resources:
   - base:
-      apiVersion: azure.crossplane.io/v1alpha3
+      apiVersion: azure.upbound.io/v1beta1
       kind: ResourceGroup
       spec:
-        location: West US 2
+        forProvider:
+          location: West US 2
     patches:
       - fromFieldPath: spec.id
         toFieldPath: metadata.name
@@ -22,23 +23,23 @@ spec:
             string:
               fmt: "%s-rg"
       - fromFieldPath: spec.id
-        toFieldPath: metadata.annotations[crossplane.io/external-name]
+        toFieldPath: metadata.annotations[upbound.io/external-name]
         transforms:
           - type: string
             string:
               fmt: "%s-rg"
       - fromFieldPath: spec.id
-        toFieldPath: metadata.labels[azure.platformref.crossplane.io/app]
+        toFieldPath: metadata.labels[azure.platformref.upbound.io/app]
   - base:
-      apiVersion: network.azure.crossplane.io/v1alpha3
+      apiVersion: network.azure.upbound.io/v1beta1
       kind: VirtualNetwork
       spec:
-        resourceGroupNameSelector:
-          matchControllerRef: true
-        location: West US 2
-        properties:
+        forProvider:
+          resourceGroupNameSelector:
+            matchControllerRef: true
+          location: West US 2
           addressSpace:
-            addressPrefixes: ['192.168.0.0/16']
+           - 192.168.0.0/16
     patches:
       - fromFieldPath: spec.id
         toFieldPath: metadata.labels[app]
@@ -48,35 +49,24 @@ spec:
           - type: string
             string:
               fmt: "%s-vnet"
-      - fromFieldPath: spec.id
-        toFieldPath: metadata.annotations[crossplane.io/external-name]
-        transforms:
-          - type: string
-            string:
-              fmt: "%s-vnet"
   - base:
-      apiVersion: network.azure.crossplane.io/v1alpha3
+      apiVersion: network.azure.upbound.io/v1beta1
       kind: Subnet
       spec:
-        resourceGroupNameSelector:
-          matchControllerRef: true
-        virtualNetworkNameSelector:
-          matchControllerRef: true
-        properties:
-          addressPrefix: '192.168.1.0/24'
+        forProvider:
+          resourceGroupNameSelector:
+            matchControllerRef: true
+          virtualNetworkNameSelector:
+            matchControllerRef: true
+          addressPrefixes:
+            - 192.168.1.0/24
           serviceEndpoints:
-            - service: Microsoft.Sql
+            - Microsoft.Sql
     patches:
       - fromFieldPath: spec.id
-        toFieldPath: metadata.labels[azure.platformref.crossplane.io/app]
+        toFieldPath: metadata.labels[azure.platformref.upbound.io/app]
       - fromFieldPath: spec.id
         toFieldPath: metadata.name
-        transforms:
-          - type: string
-            string:
-              fmt: "%s-sn"
-      - fromFieldPath: spec.id
-        toFieldPath: metadata.annotations[crossplane.io/external-name]
         transforms:
           - type: string
             string:
