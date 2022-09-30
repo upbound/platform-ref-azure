@@ -156,7 +156,7 @@ Refer to [official marketplace documentation](https://marketplace.upbound.io/pro
 
 #### Create AKS Cluster
 
-The example cluster compposition creates an AKS cluster and includes a nested composite resource for the network, which creates a Resource Group, Virtual Network, and Subnet:
+The example cluster composition creates an AKS cluster and includes a nested composite resource for the network, which creates a Resource Group, Virtual Network, and Subnet:
 
 ```console
 kubectl apply -f examples/cluster-claim.yaml
@@ -170,7 +170,7 @@ kubectl get composite
 kubectl get managed
 ```
 
->_Note: you may see an error similar to this during AKS cluster provisioning: `Error: autorest/azure: Service returned an error. Status=409 Code="RoleAssignmentExists" Message="The role assignment already exists.` This is due to a known issue with the Azure API. The AKS cluster should succesfully provision after Crossplane iterates the reconcile loop a few times._
+>_Note: you may see an error similar to this during AKS cluster provisioning: `Error: autorest/azure: Service returned an error. Status=409 Code="RoleAssignmentExists" Message="The role assignment already exists.` This is due to a known issue with the Azure API. The AKS cluster should successfully provision after Crossplane iterates the reconcile loop a few times._
 
 #### Provision a PostgreSQLInstance using kubectl
 
@@ -300,7 +300,7 @@ Packages](https://crossplane.io/docs/v1.9/concepts/packages.html#configuration-p
 ## What's Next
 
 If you're interested in building your own reference platform for your company,
-we'd love to hear from you and chat. You can setup some time with us at
+we'd love to hear from you and chat. You can set up some time with us at
 info@upbound.io.
 
 For Crossplane questions, drop by [slack.crossplane.io](https://slack.crossplane.io), and say hi!
