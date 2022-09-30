@@ -1,13 +1,13 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: xservices.azure.platformref.crossplane.io
+  name: xservices.azure.platformref.upbound.io
   labels:
     plan: full
     provider: helm
 spec:
   compositeTypeRef:
-    apiVersion: azure.platformref.crossplane.io/v1alpha1
+    apiVersion: azure.platformref.upbound.io/v1alpha1
     kind: XServices
   resources:
     - base:

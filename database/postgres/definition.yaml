@@ -1,49 +1,9 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
-  name: xpostgresqlinstances.azure.platformref.crossplane.io
-  annotations:
-    upbound.io/ui-schema: |-
-      ---
-      configSections:
-      - title: Cluster Info
-        description: Information Cluster
-        items:
-        - name: id
-          controlType: singleInput
-          type: string
-          path: ".spec.parameters.clusterRef.id"
-          title: Cluster ID
-          description: Cluster Ref
-          default: platform-ref-azure
-          validation:
-          - required: true
-            customError: Cluster ID is required.
-      - title: Database Size
-        description: Enter information to size your database
-        items:
-        - name: storageGB
-          controlType: singleInput
-          type: integer
-          path: ".spec.parameters.storageGB"
-          title: Storage (GB)
-          description: The size in GB for database storage
-          default: 5
-          validation:
-          - minimum: 1
-          - maximum: 500
-          - required: true
-        - name: writeSecretRef
-          controlType: singleInput
-          type: string
-          path: ".spec.writeConnectionSecretToRef.name"
-          title: Connection Secret Ref
-          description: name of the secret to write to this namespace
-          default: db-conn
-          validation:
-          - required: true
+  name: xpostgresqlinstances.azure.platformref.upbound.io
 spec:
-  group: azure.platformref.crossplane.io
+  group: azure.platformref.upbound.io
   names:
     kind: XPostgreSQLInstance
     plural: xpostgresqlinstances
@@ -72,6 +32,20 @@ spec:
                 properties:
                   storageGB:
                     type: integer
+                  passwordSecretRef:
+                    type: object
+                    description: "A reference to the Secret object containing database password"
+                    properties:
+                      namespace:
+                        type: string
+                      name:
+                        type: string
+                      key:
+                        type: string
+                    required:
+                    - namespace
+                    - name
+                    - key
                   clusterRef:
                     type: object
                     description: "A reference to the Network object that this postgres should be connected to."
@@ -83,5 +57,6 @@ spec:
                     - id
                 required:
                   - storageGB
+                  - passwordSecretRef
             required:
               - parameters

@@ -1,9 +1,9 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
-  name: xaks.azure.platformref.crossplane.io
+  name: xaks.azure.platformref.upbound.io
 spec:
-  group: azure.platformref.crossplane.io
+  group: azure.platformref.upbound.io
   names:
     kind: XAKS
     plural: xaks

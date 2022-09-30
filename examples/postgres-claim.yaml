@@ -1,11 +1,24 @@
-apiVersion: azure.platformref.crossplane.io/v1alpha1
+apiVersion: azure.platformref.upbound.io/v1alpha1
 kind: PostgreSQLInstance
 metadata:
   name: platform-ref-azure-db
 spec:
   parameters:
     storageGB: 5 #Minimum value is 5
+    passwordSecretRef:
+      namespace: default
+      name: psqlsecret
+      key: password
     clusterRef:
       id: platform-ref-azure #This field must match the cluster XR spec.id
   writeConnectionSecretToRef:
     name: platform-ref-azure-db-conn #Must be unique for each instance
+---
+apiVersion: v1
+data:
+  password: dXBiMHVuZHIwY2s1ITMxMzM3
+kind: Secret
+metadata:
+  name: psqlsecret
+  namespace: default
+type: Opaque
