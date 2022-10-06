@@ -1,2 +1,8 @@
+/.cache
+/.work
+/_output
+/results
+
 *.xpkg
+kubeconfig
 crossplane-azure-provider-key.json

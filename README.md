@@ -278,13 +278,13 @@ docker login ${REGISTRY} -u ${UPBOUND_ACCOUNT_EMAIL}
 Build package.
 
 ```console
-up xpkg build --name platform-ref-azure.xpkg --ignore ".github/workflows/*,hack/*"
+up xpkg build --name package.xpkg --package-root=package --examples-root="examples"
 ```
 
 Push package to registry.
 
 ```console
-up xpkg push ${PLATFORM_CONFIG} -f platform-ref-azure.xpkg
+up xpkg push ${PLATFORM_CONFIG} -f package.xpkg
 ```
 
 ![](docs/media/pushToRepo.png)
