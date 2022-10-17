@@ -1,8 +1,8 @@
 apiVersion: pkg.crossplane.io/v1
 kind: Configuration
 metadata:
-  name: platform-ref-azure
+  name: upbound-platform-ref-azure
 spec:
-  package: xpkg.upbound.io/upbound/platform-ref-azure:v0.4.0
+  package: xpkg.upbound.io/upbound/platform-ref-azure:v0.4.1
   packagePullSecrets:
     - name: package-pull-secret
