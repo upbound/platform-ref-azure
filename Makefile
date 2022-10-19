@@ -55,10 +55,16 @@ build.init: $(UP)
 # ====================================================================================
 # End to End Testing
 
-
 uptest: build $(UPTEST) $(KUBECTL) $(KUTTL) local.xpkg.deploy.configuration.$(PROJECT_NAME)
 	@$(INFO) running automated tests
 	@KUBECTL=$(KUBECTL) KUTTL=$(KUTTL) $(UPTEST) e2e examples/cluster-claim.yaml --setup-script=test/setup.sh --default-timeout=2400 || $(FAIL)
 	@$(OK) running automated tests
 
 e2e: controlplane.up uptest
+
+#TODO(turkenh): move to build submodule
+CONTROLPLANE_DUMP_DIRECTORY ?= $(OUTPUT_DIR)/controlplane-dump
+controlplane.dump: $(KUBECTL)
+	mkdir -p $(CONTROLPLANE_DUMP_DIRECTORY)
+	@$(KUBECTL) cluster-info dump --output-directory $(CONTROLPLANE_DUMP_DIRECTORY) --all-namespaces || true
+	@$(KUBECTL) get managed -o yaml > $(CONTROLPLANE_DUMP_DIRECTORY)/managed.yaml || true
