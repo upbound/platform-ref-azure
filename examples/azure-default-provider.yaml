@@ -7,5 +7,5 @@ spec:
     source: Secret
     secretRef:
       namespace: upbound-system
-      name: azure-account-creds
+      name: azure-creds
       key: credentials
