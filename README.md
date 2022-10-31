@@ -207,10 +207,9 @@ To make your changes clone this repository:
 git clone https://github.com/upbound/platform-ref-azure.git $PLATFORM && cd $PLATFORM
 ```
 
-In the [AKS composition](package/cluster/aks/composition.yaml) find the `region`
-definitions and change them from `us-west-2` to `eu-central-1`. Also find the
-`scalingConfig.maxSize` and change it from `100` to `10`.
-
+In the [AKS composition](package/cluster/aks/composition.yaml) find the
+`location` definitions and change them from `West US 2` to `West Europe`. Also find the
+`defaultNodePool[0].nodeCount` and change it from `1` to `3`.
 
 ### Build and push your platform
 
