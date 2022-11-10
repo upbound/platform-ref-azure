@@ -7,7 +7,7 @@ ${KUBECTL} wait configuration.pkg platform-ref-azure --for=condition=Healthy --t
 ${KUBECTL} wait configuration.pkg platform-ref-azure --for=condition=Installed --timeout 5m
 
 echo "Creating cloud credential secret..."
-${KUBECTL} -n upbound-system create secret generic azure-creds --from-literal=credentials="${UPTEST_AZURE_CREDS}" \
+${KUBECTL} -n upbound-system create secret generic azure-creds --from-literal=credentials="${UPTEST_CLOUD_CREDENTIALS}" \
     --dry-run=client -o yaml | ${KUBECTL} apply -f -
 
 echo "Waiting until provider-azure is healthy..."
