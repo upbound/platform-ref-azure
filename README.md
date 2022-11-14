@@ -65,6 +65,7 @@ Before we can install the reference platform we want to install the `up` CLI.
 This is a utility that makes following this quickstart guide easier. Everything
 described here can also be done in a declarative approach which we highly
 recommend for any production type use-case.
+
 <!-- TODO enhance this guide: Getting ready for Gitops -->
 
 To install `up` run this install script:
