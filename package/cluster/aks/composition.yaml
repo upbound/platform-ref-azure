@@ -15,7 +15,7 @@ spec:
         spec:
           forProvider:
             location: West US 2
-            kubernetesVersion: "1.24.3"
+            kubernetesVersion: "1.24.9"
             defaultNodePool:
               - name: default
                 nodeCount: 1 #patched
