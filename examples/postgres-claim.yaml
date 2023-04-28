@@ -2,6 +2,7 @@ apiVersion: azure.platformref.upbound.io/v1alpha1
 kind: PostgreSQLInstance
 metadata:
   name: platform-ref-azure-db
+  namespace: default
 spec:
   parameters:
     storageGB: 5 #Minimum value is 5
