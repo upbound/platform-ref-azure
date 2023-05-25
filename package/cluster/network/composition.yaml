@@ -23,7 +23,7 @@ spec:
             string:
               fmt: "%s-rg"
       - fromFieldPath: spec.id
-        toFieldPath: metadata.annotations[upbound.io/external-name]
+        toFieldPath: metadata.annotations[crossplane.io/external-name]
         transforms:
           - type: string
             string:
