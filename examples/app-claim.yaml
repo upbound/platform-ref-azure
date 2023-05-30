@@ -1,0 +1,12 @@
+apiVersion: azure.platformref.upbound.io/v1alpha1
+kind: App
+metadata:
+  name: platform-ref-azure-ghost
+spec:
+  providerConfigRef:
+    name: platform-ref-azure
+  passwordSecretRef:
+    namespace: default
+    name: platform-ref-azure-db-conn
+  writeConnectionSecretToRef:
+    name: platform-ref-azure-app-conn

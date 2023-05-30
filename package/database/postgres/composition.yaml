@@ -5,6 +5,7 @@ metadata:
   labels:
     provider: azure
 spec:
+  writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
     apiVersion: azure.platformref.upbound.io/v1alpha1
     kind: XPostgreSQLInstance
@@ -32,9 +33,9 @@ spec:
         - type: string
           string:
             fmt: "%s-postgresql"
-    - fromFieldPath: spec.claimRef.namespace
+    - fromFieldPath: spec.writeConnectionSecretToRef.namespace
       toFieldPath: spec.writeConnectionSecretToRef.namespace
-    - fromFieldPath: spec.parameters.clusterRef.id
+    - fromFieldPath: metadata.uid
       toFieldPath: spec.writeConnectionSecretToRef.name
       transforms:
       - type: string
@@ -55,10 +56,18 @@ spec:
     - fromFieldPath: spec.parameters.passwordSecretRef.key
       toFieldPath: spec.forProvider.administratorLoginPasswordSecretRef.key
     connectionDetails:
-        - fromConnectionSecretKey: username
-        - fromConnectionSecretKey: password
-        - fromConnectionSecretKey: endpoint
-        - fromConnectionSecretKey: port
+    - type: FromFieldPath
+      name: host
+      fromFieldPath: status.atProvider.fqdn
+    - type: FromConnectionSecretKey
+      name: username
+      fromConnectionSecretKey: username
+    - type: FromConnectionSecretKey
+      name: password
+      fromConnectionSecretKey: password
+    - type: FromConnectionSecretKey
+      name: port
+      fromConnectionSecretKey: port
   # db-server vnet-rule for subnet where AKS lives in
   - name: vnetrule
     base:
