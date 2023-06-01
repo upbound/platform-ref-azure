@@ -11,11 +11,10 @@ spec:
     kind: PostgreSQLInstance
     plural: postgresqlinstances
   connectionSecretKeys:
-    - hostname
-    - port
-    - database
     - username
     - password
+    - port
+    - host
   versions:
   - name: v1alpha1
     served: true
