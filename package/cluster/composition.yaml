@@ -14,6 +14,11 @@ spec:
       patches:
         - fromFieldPath: spec.id
           toFieldPath: spec.id
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.subnetCIDR
+          toFieldPath: status.authorizedIpRange
+          policy:
+            fromFieldPath: Required
     - base:
         apiVersion: azure.platformref.upbound.io/v1alpha1
         kind: XAKS
@@ -30,6 +35,10 @@ spec:
           toFieldPath: spec.parameters.nodes.count
         - fromFieldPath: spec.parameters.nodes.size
           toFieldPath: spec.parameters.nodes.size
+        - fromFieldPath: status.authorizedIpRange
+          toFieldPath: spec.parameters.authorizedIpRange
+          policy:
+            fromFieldPath: Required
     - base:
         apiVersion: azure.platformref.upbound.io/v1alpha1
         kind: XServices

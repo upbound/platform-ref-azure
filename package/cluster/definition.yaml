@@ -67,3 +67,8 @@ spec:
             required:
             - id
             - parameters
+          status:
+            type: object
+            properties:
+              authorizedIpRange:
+                type: string

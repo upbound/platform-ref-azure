@@ -74,3 +74,9 @@ spec:
             - type: string
               string:
                 fmt: "%s-sn"
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.atProvider.id
+          toFieldPath: status.subnetId
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.atProvider.addressPrefixes[0]
+          toFieldPath: status.subnetCIDR

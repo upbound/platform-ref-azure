@@ -27,6 +27,8 @@ spec:
                 type: object
                 description: AKS configuration parameters.
                 properties:
+                  authorizedIpRange:
+                    type: string
                   nodes:
                     type: object
                     description: AKS node configuration parameters.
