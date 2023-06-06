@@ -33,7 +33,7 @@ spec:
         - fromFieldPath: spec.id
           toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.upbound.io/network-id]
         - fromFieldPath: spec.id
-          toFieldPath: spec.forProvider.vnetSubnetIdSelector.matchLabels[azure.platformref.upbound.io/network-id]
+          toFieldPath: spec.forProvider.defaultNodePool[0].vnetSubnetIdSelector.matchLabels[azure.platformref.upbound.io/network-id]
         - fromFieldPath: spec.id
           toFieldPath: spec.forProvider.dnsPrefix
         - fromFieldPath: spec.parameters.nodes.size

@@ -10,6 +10,6 @@ spec:
     name: platform-ref-azure
   passwordSecretRef:
     namespace: default
-    name: platform-ref-azure-db-conn
+    name: platform-ref-azure-db-conn-mariadb
   writeConnectionSecretToRef:
     name: platform-ref-azure-app-conn

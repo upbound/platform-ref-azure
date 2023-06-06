@@ -1,38 +1,38 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: xpostgresqlinstances.azure.platformref.upbound.io
+  name: xmariadbinstances.azure.platformref.upbound.io
   labels:
+    dbengine: mariadb
     provider: azure
 spec:
   writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
     apiVersion: azure.platformref.upbound.io/v1alpha1
-    kind: XPostgreSQLInstance
+    kind: XSQLInstance
   resources:
-    - name: postgresqlserver
+    - name: mariadlserver
       base:
-        apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
+        apiVersion: dbformariadb.azure.upbound.io/v1beta1
         kind: Server
         spec:
           forProvider:
-            version: "11"
-            administratorLogin: psqladmin
+            version: "10.3"
+            administratorLogin: xp-admin
             location: West US 2
             skuName: GP_Gen5_2
             storageMb: 5120
-            sslEnforcementEnabled: true
+            sslEnforcementEnabled: false
+            sslMinimalTlsVersionEnforced: TLSEnforcementDisabled
             identity:
             - type: SystemAssigned
-            # due to: https://github.com/Azure/azure-rest-api-specs/issues/9571
-            infrastructureEncryptionEnabled: false
       patches:
         - fromFieldPath: spec.parameters.clusterRef.id
           toFieldPath: metadata.name
           transforms:
             - type: string
               string:
-                fmt: "%s-postgresql"
+                fmt: "%s-mariadb"
         - fromFieldPath: spec.writeConnectionSecretToRef.namespace
           toFieldPath: spec.writeConnectionSecretToRef.namespace
         - fromFieldPath: metadata.uid
@@ -40,7 +40,7 @@ spec:
           transforms:
           - type: string
             string:
-              fmt: "%s-postgresql"
+              fmt: "%s-mariadb"
         - fromFieldPath: spec.parameters.storageGB
           toFieldPath: spec.forProvider.storageMb
           transforms:
@@ -71,7 +71,7 @@ spec:
     # db-server vnet-rule for subnet where AKS lives in
     - name: vnetrule
       base:
-        apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
+        apiVersion: dbformariadb.azure.upbound.io/v1beta1
         kind: VirtualNetworkRule
         spec:
           forProvider:
@@ -86,5 +86,27 @@ spec:
                 fmt: "%s-sn-rule"
         - fromFieldPath: spec.parameters.clusterRef.id
           toFieldPath: spec.forProvider.subnetIdSelector.matchLabels[azure.platformref.upbound.io/network-id]
+        - fromFieldPath: spec.parameters.clusterRef.id
+          toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.upbound.io/network-id]
+    - name: database
+      base:
+        apiVersion: dbformariadb.azure.upbound.io/v1beta1
+        kind: Database
+        spec:
+          forProvider:
+            charset: utf8
+            collation: utf8_general_ci
+            serverNameSelector:
+              matchControllerRef: true
+      patches:
+        - fromFieldPath: spec.parameters.clusterRef.id
+          toFieldPath: metadata.name
+          transforms:
+            - type: match
+              match:
+                patterns:
+                  - type: regexp
+                    regexp: '.*'
+                    result: upbound
         - fromFieldPath: spec.parameters.clusterRef.id
           toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.upbound.io/network-id]
