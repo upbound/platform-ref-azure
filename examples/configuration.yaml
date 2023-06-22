@@ -3,6 +3,4 @@ kind: Configuration
 metadata:
   name: upbound-platform-ref-azure
 spec:
-  package: xpkg.upbound.io/upbound/platform-ref-azure:v0.4.1
-  packagePullSecrets:
-    - name: package-pull-secret
+  package: xpkg.upbound.io/upbound/platform-ref-azure:v0.7.0
