@@ -3,17 +3,14 @@ kind: Cluster
 metadata:
   name: platform-ref-azure
   namespace: default
-  annotations:
-    uptest.upbound.io/pre-delete-hook: testhooks/delete-release.sh
 spec:
-  id: platform-ref-azure
+  compositeDeletePolicy: Foreground
   parameters:
+    id: platform-ref-azure
+    region: westus
+    version: "1.27.3"
     nodes:
-      count: 1 #1-100
-      size: small #small/medium/large
-    services:
-      operators:
-        prometheus:
-          version: "15.0.1"
+      count: 3
+      instanceType: Standard_B2s
   writeConnectionSecretToRef:
-    name: platform-ref-azure-kubeconfig #Must be unique for each instance
+    name: platform-ref-azure-kubeconfig

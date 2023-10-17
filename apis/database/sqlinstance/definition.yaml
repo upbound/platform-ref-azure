@@ -1,0 +1,75 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xsqlinstances.azure.platformref.upbound.io
+spec:
+  group: azure.platformref.upbound.io
+  names:
+    kind: XSQLInstance
+    plural: xsqlinstances
+  claimNames:
+    kind: SQLInstance
+    plural: sqlinstances
+  connectionSecretKeys:
+  - username
+  - password
+  - port
+  - host
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              parameters:
+                type: object
+                properties:
+                  region:
+                    type: string
+                    description: Region is the region you'd like your resource to be created in.
+                  deletionPolicy:
+                    description: Delete the external resources when the Claim/XR is deleted. Defaults to Delete
+                    enum:
+                    - Delete
+                    - Orphan
+                    type: string
+                    default: Delete
+                  providerConfigName:
+                    description: Crossplane ProviderConfig to use for provisioning this resources
+                    type: string
+                    default: default
+                  storageGB:
+                    type: integer
+                  passwordSecretRef:
+                    type: object
+                    description: "A reference to the Secret object containing database password"
+                    properties:
+                      namespace:
+                        type: string
+                      name:
+                        type: string
+                      key:
+                        type: string
+                    required:
+                    - namespace
+                    - name
+                    - key
+                  clusterRef:
+                    type: object
+                    description: "A reference to the Network object that this postgres should be connected to."
+                    properties:
+                      id:
+                        type: string
+                        description: ID of the Network object this ref points to.
+                    required:
+                    - id
+                required:
+                - storageGB
+                - passwordSecretRef
+            required:
+            - parameters

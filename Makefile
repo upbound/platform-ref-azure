@@ -11,13 +11,15 @@ PLATFORMS ?= linux_amd64
 # ====================================================================================
 # Setup Kubernetes tools
 
-UP_VERSION = v0.13.0
+UP_VERSION = v0.19.1
 UP_CHANNEL = stable
-UPTEST_VERSION = v0.2.1
+UPTEST_VERSION = v0.5.0
 
 -include build/makelib/k8s_tools.mk
 # ====================================================================================
 # Setup XPKG
+XPKG_DIR = $(shell pwd)
+XPKG_IGNORE = .github/workflows/*.yaml,.github/workflows/*.yml,examples/*.yaml,.work/uptest-datasource.yaml
 XPKG_REG_ORGS ?= xpkg.upbound.io/upbound
 # NOTE(hasheddan): skip promoting on xpkg.upbound.io as channel tags are
 # inferred.
@@ -26,6 +28,7 @@ XPKGS = $(PROJECT_NAME)
 -include build/makelib/xpkg.mk
 
 CROSSPLANE_NAMESPACE = upbound-system
+CROSSPLANE_ARGS = "--enable-usages"
 -include build/makelib/local.xpkg.mk
 -include build/makelib/controlplane.mk
 
@@ -59,7 +62,7 @@ build.init: $(UP)
 # - UPTEST_CLOUD_CREDENTIALS, cloud credentials for the provider being tested, e.g. export UPTEST_CLOUD_CREDENTIALS=$(cat azure.json)
 uptest: $(UPTEST) $(KUBECTL) $(KUTTL)
 	@$(INFO) running automated tests
-	@KUBECTL=$(KUBECTL) KUTTL=$(KUTTL) $(UPTEST) e2e examples/cluster-claim.yaml,examples/postgres-claim.yaml,examples/mariadb-claim.yaml,examples/app-claim.yaml --setup-script=test/setup.sh --default-timeout=2400 || $(FAIL)
+	@KUBECTL=$(KUBECTL) KUTTL=$(KUTTL) $(UPTEST) e2e examples/postgres-claim.yaml,examples/mariadb-claim.yaml,examples/app-claim.yaml,examples/cluster-claim.yaml --setup-script=test/setup.sh --default-timeout=2400 || $(FAIL)
 	@$(OK) running automated tests
 
 # This target requires the following environment variables to be set:
