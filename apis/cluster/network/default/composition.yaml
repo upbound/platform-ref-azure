@@ -67,9 +67,9 @@ spec:
         - fromFieldPath: spec.parameters.id
           toFieldPath: metadata.name
           transforms:
-          - type: string
-            string:
-              fmt: "%s-vnet"
+            - type: string
+              string:
+                fmt: "%s-vnet"
     - name: subnet
       base:
         apiVersion: network.azure.upbound.io/v1beta1
@@ -94,6 +94,6 @@ spec:
         - fromFieldPath: spec.parameters.id
           toFieldPath: metadata.name
           transforms:
-          - type: string
-            string:
-              fmt: "%s-sn"
+            - type: string
+              string:
+                fmt: "%s-sn"

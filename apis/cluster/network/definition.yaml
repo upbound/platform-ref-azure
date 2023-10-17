@@ -8,41 +8,41 @@ spec:
     kind: XNetwork
     plural: xnetworks
   versions:
-  - name: v1alpha1
-    served: true
-    referenceable: true
-    schema:
-      openAPIV3Schema:
-        type: object
-        properties:
-          spec:
-            type: object
-            properties:
-              parameters:
-                description: Network Parameters
-                properties:
-                  id:
-                    type: string
-                    description: ID of this Network that other objects will use to refer to it.
-                  region:
-                    type: string
-                    description: Region is the region you'd like your resource to be created in.
-                  deletionPolicy:
-                    description: Delete the external resources when the Claim/XR is deleted. Defaults to Delete
-                    enum:
-                    - Delete
-                    - Orphan
-                    type: string
-                    default: Delete
-                  providerConfigName:
-                    description: Crossplane ProviderConfig to use for provisioning this resources
-                    type: string
-                    default: default
-                required:
-                - deletionPolicy
-                - providerConfigName
-                - id
-                - region
-                type: object
-            required:
-            - parameters
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                parameters:
+                  description: Network Parameters
+                  properties:
+                    id:
+                      type: string
+                      description: ID of this Network that other objects will use to refer to it.
+                    region:
+                      type: string
+                      description: Region is the region you'd like your resource to be created in.
+                    deletionPolicy:
+                      description: Delete the external resources when the Claim/XR is deleted. Defaults to Delete
+                      enum:
+                        - Delete
+                        - Orphan
+                      type: string
+                      default: Delete
+                    providerConfigName:
+                      description: Crossplane ProviderConfig to use for provisioning this resources
+                      type: string
+                      default: default
+                  required:
+                    - deletionPolicy
+                    - providerConfigName
+                    - id
+                    - region
+                  type: object
+              required:
+                - parameters
