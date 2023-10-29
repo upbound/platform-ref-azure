@@ -3,6 +3,7 @@ kind: CompositeResourceDefinition
 metadata:
   name: xapps.azure.platformref.upbound.io
 spec:
+  defaultCompositeDeletePolicy: Foreground
   group: azure.platformref.upbound.io
   names:
     kind: XApp
@@ -21,45 +22,47 @@ spec:
           spec:
             type: object
             properties:
-              helm:
-               type: object
-               description: Configuration for operators.
-               properties:
-                 chart:
-                   type: object
-                   description: Configuration for the Helm Chart
-                   properties:
-                     name:
-                       type: string
-                       description: chart name
-                     repo:
-                       type: string
-                       description: chart repo
-                     version:
-                       type: string
-                       description: chart version
-              passwordSecretRef:
+              parameters:
                 type: object
-                description: "A reference to the Secret object containing database credentials"
+                description: App configuration parameters.
                 properties:
-                  namespace:
+                  deletionPolicy:
+                    description: Delete the external resources when the Claim/XR is deleted. Defaults to Delete
+                    enum:
+                      - Delete
+                      - Orphan
                     type: string
-                  name:
+                    default: Delete
+                  providerConfigName:
+                    description: Crossplane ProviderConfig to use for provisioning this resources
                     type: string
+                  helm:
+                    type: object
+                    description: Configuration for operators.
+                    properties:
+                      chart:
+                        type: object
+                        description: Configuration for the Helm Chart
+                        properties:
+                          name:
+                            type: string
+                            description: chart name
+                          repo:
+                            type: string
+                            description: chart repo
+                          version:
+                            type: string
+                            description: chart version
+                  passwordSecretRef:
+                    type: object
+                    description: "A reference to the Secret object containing database credentials"
+                    properties:
+                      namespace:
+                        type: string
+                      name:
+                        type: string
+                    required:
+                      - namespace
+                      - name
                 required:
-                - namespace
-                - name
-              providerConfigRef:
-                type: object
-                description: "A reference to the ProviderConfig of the cluster that services should
-                be deployed to."
-                properties:
-                  name:
-                    type: string
-                    description: "Name of the Helm provider configuration.
-                      This will typically be the name of the cluster with a
-                      five character suffix appended."
-                required:
-                - name
-            required:
-            - providerConfigRef
+                - providerConfigName

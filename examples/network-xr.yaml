@@ -3,4 +3,6 @@ kind: XNetwork
 metadata:
   name: ref-azure-network
 spec:
-  id: ref-azure-network-from-xr
+  parameters:
+    id: ref-azure-network-from-xr
+    region: westus

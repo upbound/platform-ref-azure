@@ -8,35 +8,88 @@ spec:
     apiVersion: azure.platformref.upbound.io/v1alpha1
     kind: XCluster
   resources:
-    - base:
+    - name: compositeNetworkAKS
+      base:
         apiVersion: azure.platformref.upbound.io/v1alpha1
         kind: XNetwork
       patches:
-        - fromFieldPath: spec.id
-          toFieldPath: spec.id
-    - base:
+        - fromFieldPath: spec.parameters.id
+          toFieldPath: spec.parameters.id
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.parameters.region
+        - fromFieldPath: spec.parameters.deletionPolicy
+          toFieldPath: spec.parameters.deletionPolicy
+        - fromFieldPath: spec.parameters.providerConfigName
+          toFieldPath: spec.parameters.providerConfigName
+        - fromFieldPath: spec.parameters.networkSelector
+          toFieldPath: spec.compositionSelector.matchLabels[type]
+    - name: compositeClusterEKS
+      base:
         apiVersion: azure.platformref.upbound.io/v1alpha1
         kind: XAKS
       connectionDetails:
         - fromConnectionSecretKey: kubeconfig
       patches:
-        - fromFieldPath: spec.id
-          toFieldPath: spec.id
-        - fromFieldPath: spec.id
+        - fromFieldPath: spec.parameters.id
+          toFieldPath: metadata.labels[xaks.azure.platformref.upbound.io/cluster-id]
+        - fromFieldPath: spec.parameters.id
+          toFieldPath: spec.parameters.id
+        - fromFieldPath: spec.parameters.region
+          toFieldPath: spec.parameters.region
+        - fromFieldPath: spec.parameters.deletionPolicy
+          toFieldPath: spec.parameters.deletionPolicy
+        - fromFieldPath: spec.parameters.providerConfigName
+          toFieldPath: spec.parameters.providerConfigName
+        - fromFieldPath: metadata.uid
           toFieldPath: spec.writeConnectionSecretToRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-aks"
         - fromFieldPath: spec.writeConnectionSecretToRef.namespace
           toFieldPath: spec.writeConnectionSecretToRef.namespace
+        - fromFieldPath: spec.parameters.version
+          toFieldPath: spec.parameters.version
         - fromFieldPath: spec.parameters.nodes.count
           toFieldPath: spec.parameters.nodes.count
-        - fromFieldPath: spec.parameters.nodes.size
-          toFieldPath: spec.parameters.nodes.size
-    - base:
+        - fromFieldPath: spec.parameters.nodes.instanceType
+          toFieldPath: spec.parameters.nodes.instanceType
+    - name: compositeClusterServices
+      base:
         apiVersion: azure.platformref.upbound.io/v1alpha1
         kind: XServices
       patches:
-        - fromFieldPath: spec.id
-          toFieldPath: metadata.name
-        - fromFieldPath: spec.id
+        - fromFieldPath: spec.parameters.deletionPolicy
+          toFieldPath: spec.deletionPolicy
+        - fromFieldPath: spec.parameters.id
           toFieldPath: spec.providerConfigRef.name
+        - fromFieldPath: spec.parameters.services.operators.flux.version
+          toFieldPath: spec.operators.flux.version
         - fromFieldPath: spec.parameters.services.operators.prometheus.version
           toFieldPath: spec.operators.prometheus.version
+        - fromFieldPath: spec.parameters.gitops.url
+          toFieldPath: spec.gitops.url
+        - fromFieldPath: spec.parameters.gitops.path
+          toFieldPath: spec.gitops.path
+        - fromFieldPath: spec.parameters.gitops.kubeConfigSecretRef.name
+          toFieldPath: spec.gitops.kubeConfigSecretRef.name
+        - fromFieldPath: spec.parameters.gitops.kubeConfigSecretRef.namespace
+          toFieldPath: spec.gitops.kubeConfigSecretRef.namespace
+        - fromFieldPath: spec.parameters.serviceSelector
+          toFieldPath: spec.compositionSelector.matchLabels[type]
+
+    - name: usageXAksByXService
+      base:
+        apiVersion: apiextensions.crossplane.io/v1alpha1
+        kind: Usage
+        spec:
+          of:
+            apiVersion: azure.platformref.upbound.io/v1alpha1
+            kind: XAKS
+            resourceSelector:
+              matchControllerRef: true
+          by:
+            apiVersion: azure.platformref.upbound.io/v1alpha1
+            kind: XServices
+            resourceSelector:
+              matchControllerRef: true

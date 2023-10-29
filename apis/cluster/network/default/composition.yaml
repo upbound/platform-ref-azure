@@ -4,34 +4,48 @@ metadata:
   name: xnetworks.azure.platformref.upbound.io
   labels:
     provider: azure
+    type: basic
 spec:
+  writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
     apiVersion: azure.platformref.upbound.io/v1alpha1
     kind: XNetwork
   patchSets:
+    - name: providerConfigRef
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.providerConfigName
+          toFieldPath: spec.providerConfigRef.name
+    - name: deletionPolicy
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.deletionPolicy
+          toFieldPath: spec.deletionPolicy
     - name: network-id
       patches:
         - type: FromCompositeFieldPath
-          fromFieldPath: spec.id
+          fromFieldPath: spec.parameters.id
           toFieldPath: metadata.labels[azure.platformref.upbound.io/network-id]
+    - name: region
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.region
+          toFieldPath: spec.forProvider.location
   resources:
-    - name: resource-group
+    - name: resourceGroup
       base:
         apiVersion: azure.upbound.io/v1beta1
         kind: ResourceGroup
-        spec:
-          forProvider:
-            location: West US 2
       patches:
         - type: PatchSet
+          patchSetName: providerConfigRef
+        - type: PatchSet
+          patchSetName: deletionPolicy
+        - type: PatchSet
           patchSetName: network-id
-        - fromFieldPath: spec.id
-          toFieldPath: metadata.name
-          transforms:
-            - type: string
-              string:
-                fmt: "%s-rg"
-    - name: virtual-network
+        - type: PatchSet
+          patchSetName: region
+    - name: virtualNetwork
       base:
         apiVersion: network.azure.upbound.io/v1beta1
         kind: VirtualNetwork
@@ -39,13 +53,18 @@ spec:
           forProvider:
             resourceGroupNameSelector:
               matchControllerRef: true
-            location: West US 2
             addressSpace:
               - 192.168.0.0/16
       patches:
         - type: PatchSet
+          patchSetName: providerConfigRef
+        - type: PatchSet
+          patchSetName: deletionPolicy
+        - type: PatchSet
           patchSetName: network-id
-        - fromFieldPath: spec.id
+        - type: PatchSet
+          patchSetName: region
+        - fromFieldPath: spec.parameters.id
           toFieldPath: metadata.name
           transforms:
             - type: string
@@ -67,8 +86,12 @@ spec:
               - Microsoft.Sql
       patches:
         - type: PatchSet
+          patchSetName: providerConfigRef
+        - type: PatchSet
+          patchSetName: deletionPolicy
+        - type: PatchSet
           patchSetName: network-id
-        - fromFieldPath: spec.id
+        - fromFieldPath: spec.parameters.id
           toFieldPath: metadata.name
           transforms:
             - type: string

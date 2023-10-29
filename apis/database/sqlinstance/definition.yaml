@@ -29,6 +29,20 @@ spec:
               parameters:
                 type: object
                 properties:
+                  region:
+                    type: string
+                    description: Region is the region you'd like your resource to be created in.
+                  deletionPolicy:
+                    description: Delete the external resources when the Claim/XR is deleted. Defaults to Delete
+                    enum:
+                      - Delete
+                      - Orphan
+                    type: string
+                    default: Delete
+                  providerConfigName:
+                    description: Crossplane ProviderConfig to use for provisioning this resources
+                    type: string
+                    default: default
                   storageGB:
                     type: integer
                   passwordSecretRef:
@@ -58,4 +72,4 @@ spec:
                   - storageGB
                   - passwordSecretRef
             required:
-              - parameters
+            - parameters

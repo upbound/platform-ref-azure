@@ -1,52 +1,75 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: xmariadbinstances.azure.platformref.upbound.io
+  name: xpostgresqlinstances.azure.platformref.upbound.io
   labels:
-    dbengine: mariadb
+    dbengine: postgresql
     provider: azure
 spec:
   writeConnectionSecretsToNamespace: upbound-system
   compositeTypeRef:
     apiVersion: azure.platformref.upbound.io/v1alpha1
     kind: XSQLInstance
+  patchSets:
+    - name: providerConfigRef
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.providerConfigName
+          toFieldPath: spec.providerConfigRef.name
+    - name: deletionPolicy
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.deletionPolicy
+          toFieldPath: spec.deletionPolicy
+    - name: region
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.region
+          toFieldPath: spec.forProvider.location
   resources:
-    - name: mariadlserver
+    - name: postgresqlserver
       base:
-        apiVersion: dbformariadb.azure.upbound.io/v1beta1
+        apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
         kind: Server
         spec:
           forProvider:
-            version: "10.3"
-            administratorLogin: xp-admin
-            location: West US 2
+            version: "11"
+            administratorLogin: psqladmin
             skuName: GP_Gen5_2
             storageMb: 5120
             sslEnforcementEnabled: false
             sslMinimalTlsVersionEnforced: TLSEnforcementDisabled
             identity:
-            - type: SystemAssigned
+              - type: SystemAssigned
+            # due to: https://github.com/Azure/azure-rest-api-specs/issues/9571
+            infrastructureEncryptionEnabled: false
       patches:
+        - type: PatchSet
+          patchSetName: providerConfigRef
+        - type: PatchSet
+          patchSetName: deletionPolicy
+        - type: PatchSet
+          patchSetName: region
         - fromFieldPath: spec.parameters.clusterRef.id
           toFieldPath: metadata.name
           transforms:
             - type: string
               string:
-                fmt: "%s-mariadb"
+                fmt: "%s-postgresql"
         - fromFieldPath: spec.writeConnectionSecretToRef.namespace
           toFieldPath: spec.writeConnectionSecretToRef.namespace
         - fromFieldPath: metadata.uid
           toFieldPath: spec.writeConnectionSecretToRef.name
           transforms:
-          - type: string
-            string:
-              fmt: "%s-mariadb"
+            - type: string
+              string:
+                fmt: "%s-postgresql"
         - fromFieldPath: spec.parameters.storageGB
           toFieldPath: spec.forProvider.storageMb
           transforms:
-          - type: math
-            math:
-              multiply: 1024
+            - type: math
+              math:
+                multiply: 1024
         - fromFieldPath: spec.parameters.clusterRef.id
           toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.upbound.io/network-id]
         - fromFieldPath: spec.parameters.passwordSecretRef.namespace
@@ -68,16 +91,19 @@ spec:
         - type: FromConnectionSecretKey
           name: port
           fromConnectionSecretKey: port
-    # db-server vnet-rule for subnet where AKS lives in
     - name: vnetrule
       base:
-        apiVersion: dbformariadb.azure.upbound.io/v1beta1
+        apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
         kind: VirtualNetworkRule
         spec:
           forProvider:
             serverNameSelector:
               matchControllerRef: true
       patches:
+        - type: PatchSet
+          patchSetName: providerConfigRef
+        - type: PatchSet
+          patchSetName: deletionPolicy
         - fromFieldPath: spec.parameters.clusterRef.id
           toFieldPath: metadata.name
           transforms:
@@ -86,27 +112,5 @@ spec:
                 fmt: "%s-sn-rule"
         - fromFieldPath: spec.parameters.clusterRef.id
           toFieldPath: spec.forProvider.subnetIdSelector.matchLabels[azure.platformref.upbound.io/network-id]
-        - fromFieldPath: spec.parameters.clusterRef.id
-          toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.upbound.io/network-id]
-    - name: database
-      base:
-        apiVersion: dbformariadb.azure.upbound.io/v1beta1
-        kind: Database
-        spec:
-          forProvider:
-            charset: utf8
-            collation: utf8_general_ci
-            serverNameSelector:
-              matchControllerRef: true
-      patches:
-        - fromFieldPath: spec.parameters.clusterRef.id
-          toFieldPath: metadata.name
-          transforms:
-            - type: match
-              match:
-                patterns:
-                  - type: regexp
-                    regexp: '.*'
-                    result: upbound
         - fromFieldPath: spec.parameters.clusterRef.id
           toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.upbound.io/network-id]

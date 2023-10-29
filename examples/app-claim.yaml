@@ -3,13 +3,12 @@ kind: App
 metadata:
   name: platform-ref-azure-ghost
   namespace: default
-  annotations:
-    uptest.upbound.io/pre-delete-hook: testhooks/delete-release-app.sh
 spec:
-  providerConfigRef:
-    name: platform-ref-azure
-  passwordSecretRef:
-    namespace: default
-    name: platform-ref-azure-db-conn-mariadb
+  compositeDeletePolicy: Foreground
+  parameters:
+    providerConfigName: platform-ref-azure
+    passwordSecretRef:
+      namespace: default
+      name: platform-ref-azure-db-conn-mariadb
   writeConnectionSecretToRef:
     name: platform-ref-azure-app-conn
