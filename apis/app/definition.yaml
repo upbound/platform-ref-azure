@@ -3,6 +3,10 @@ kind: CompositeResourceDefinition
 metadata:
   name: xapps.azure.platformref.upbound.io
 spec:
+  # We require Foreground Deletion
+  # in such situations, XApp is deleted right away,
+  # taking the Usage and XAKS with it,
+  # which causes issues for Release.helm's deletion process.
   defaultCompositeDeletePolicy: Foreground
   group: azure.platformref.upbound.io
   names:
