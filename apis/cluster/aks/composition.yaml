@@ -25,7 +25,7 @@ spec:
           fromFieldPath: spec.parameters.region
           toFieldPath: spec.forProvider.location
   resources:
-    - name: kubernetes-cluster
+    - name: kubernetesCluster
       base:
         apiVersion: containerservice.azure.upbound.io/v1beta1
         kind: KubernetesCluster
@@ -70,7 +70,7 @@ spec:
               fmt: "%s-akscluster"
       connectionDetails:
         - fromConnectionSecretKey: kubeconfig
-    - name: providerConfig-helm
+    - name: providerConfigHelm
       base:
         apiVersion: helm.crossplane.io/v1beta1
         kind: ProviderConfig
@@ -92,7 +92,7 @@ spec:
               fmt: "%s-akscluster"
       readinessChecks:
         - type: None
-    - name: providerConfig-kubernetes
+    - name: providerConfigKubernetes
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha1
         kind: ProviderConfig

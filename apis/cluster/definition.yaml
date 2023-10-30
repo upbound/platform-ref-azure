@@ -82,8 +82,8 @@ spec:
                         description: instance types associated with the Node Group.
                         default: Standard_B2s
                     required:
-                    - count
-                    - instanceType
+                      - count
+                      - instanceType
                   gitops:
                     type: object
                     description: GitOps configure gitops system
@@ -134,10 +134,10 @@ spec:
                                 description: Prometheus operator version to run.
                                 default: "41.4.1"
                 required:
-                - nodes
-                - id
-                - region
-                - deletionPolicy
-                - providerConfigName
+                  - nodes
+                  - id
+                  - region
+                  - deletionPolicy
+                  - providerConfigName
             required:
-            - parameters
+              - parameters

@@ -39,10 +39,10 @@ spec:
                       type: string
                       default: default
                   required:
-                  - deletionPolicy
-                  - providerConfigName
-                  - id
-                  - region
+                    - deletionPolicy
+                    - providerConfigName
+                    - id
+                    - region
                   type: object
               required:
-              - parameters
+                - parameters
