@@ -8,55 +8,69 @@ spec:
   compositeTypeRef:
     apiVersion: azure.platformref.upbound.io/v1alpha1
     kind: XAKS
+  patchSets:
+    - name: providerConfigRef
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.providerConfigName
+          toFieldPath: spec.providerConfigRef.name
+    - name: deletionPolicy
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.deletionPolicy
+          toFieldPath: spec.deletionPolicy
+    - name: region
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.region
+          toFieldPath: spec.forProvider.location
   resources:
-    - name: kubernetes-cluster
+    - name: kubernetesCluster
       base:
         apiVersion: containerservice.azure.upbound.io/v1beta1
         kind: KubernetesCluster
         spec:
           forProvider:
-            location: West US 2
-            kubernetesVersion: "1.26.3"
             defaultNodePool:
               - name: default
-                nodeCount: 1 #patched
-                vmSize: Standard_B2s #patched
             identity:
               - type: "SystemAssigned"
       patches:
-        - fromFieldPath: spec.id
+        - type: PatchSet
+          patchSetName: providerConfigRef
+        - type: PatchSet
+          patchSetName: deletionPolicy
+        - type: PatchSet
+          patchSetName: region
+        - fromFieldPath: spec.parameters.version
+          toFieldPath: spec.forProvider.kubernetesVersion
+        - fromFieldPath: spec.parameters.id
           toFieldPath: metadata.name
           transforms:
-            - type: string
-              string:
-                fmt: "%s-aks"
-        - fromFieldPath: spec.id
+          - type: string
+            string:
+              fmt: "%s-aks"
+        - fromFieldPath: spec.parameters.id
           toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platformref.upbound.io/network-id]
-        - fromFieldPath: spec.id
+        - fromFieldPath: spec.parameters.id
           toFieldPath: spec.forProvider.defaultNodePool[0].vnetSubnetIdSelector.matchLabels[azure.platformref.upbound.io/network-id]
-        - fromFieldPath: spec.id
+        - fromFieldPath: spec.parameters.id
           toFieldPath: spec.forProvider.dnsPrefix
-        - fromFieldPath: spec.parameters.nodes.size
+        - fromFieldPath: spec.parameters.nodes.instanceType
           toFieldPath: spec.forProvider.defaultNodePool[0].vmSize
-          transforms:
-            - type: map
-              map:
-                small: Standard_B2s
-                medium: Standard_B4ms
-                large: Standard_B8ms
         - fromFieldPath: spec.parameters.nodes.count
           toFieldPath: spec.forProvider.defaultNodePool[0].nodeCount
         - fromFieldPath: spec.writeConnectionSecretToRef.namespace
           toFieldPath: spec.writeConnectionSecretToRef.namespace
-        - fromFieldPath: spec.writeConnectionSecretToRef.name
+        - fromFieldPath: metadata.uid
           toFieldPath: spec.writeConnectionSecretToRef.name
           transforms:
-            - type: string
-              string:
-                fmt: "%s-aks"
+          - type: string
+            string:
+              fmt: "%s-akscluster"
       connectionDetails:
         - fromConnectionSecretKey: kubeconfig
-    - name: provider-config-helm
+    - name: providerConfigHelm
       base:
         apiVersion: helm.crossplane.io/v1beta1
         kind: ProviderConfig
@@ -66,17 +80,37 @@ spec:
             secretRef:
               key: kubeconfig
       patches:
-        - fromFieldPath: spec.id
+        - fromFieldPath: spec.parameters.id
           toFieldPath: metadata.name
         - fromFieldPath: spec.writeConnectionSecretToRef.namespace
           toFieldPath: spec.credentials.secretRef.namespace
-        # This ProviderConfig uses the above AKS cluster's connection secret as
-        # its credentials secret.
-        - fromFieldPath: spec.writeConnectionSecretToRef.name
+        - fromFieldPath: metadata.uid
           toFieldPath: spec.credentials.secretRef.name
           transforms:
-            - type: string
-              string:
-                fmt: "%s-aks"
+          - type: string
+            string:
+              fmt: "%s-akscluster"
+      readinessChecks:
+        - type: None
+    - name: providerConfigKubernetes
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: ProviderConfig
+        spec:
+          credentials:
+            source: Secret
+            secretRef:
+              key: kubeconfig
+      patches:
+        - fromFieldPath: spec.parameters.id
+          toFieldPath: metadata.name
+        - fromFieldPath: spec.writeConnectionSecretToRef.namespace
+          toFieldPath: spec.credentials.secretRef.namespace
+        - fromFieldPath: metadata.uid
+          toFieldPath: spec.credentials.secretRef.name
+          transforms:
+          - type: string
+            string:
+              fmt: "%s-akscluster"
       readinessChecks:
         - type: None
