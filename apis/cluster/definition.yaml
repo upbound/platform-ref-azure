@@ -3,6 +3,10 @@ kind: CompositeResourceDefinition
 metadata:
   name: xclusters.azure.platformref.upbound.io
 spec:
+  # We require Foreground Deletion for cases where XRs are generated without a Claim, like in XServices.
+  # In such situations, XService is deleted right away,
+  # taking the Usage and XAKS with it,
+  # which causes issues for Release.helm's deletion process.
   defaultCompositeDeletePolicy: Foreground
   group: azure.platformref.upbound.io
   names:
