@@ -10,7 +10,7 @@ spec:
   resources:
     - name: compositeNetworkAKS
       base:
-        apiVersion: azure.platformref.upbound.io/v1alpha1
+        apiVersion: azure.platform.upbound.io/v1alpha1
         kind: XNetwork
       patches:
         - fromFieldPath: spec.parameters.id
@@ -93,3 +93,22 @@ spec:
             kind: XServices
             resourceSelector:
               matchControllerRef: true
+
+    - name: usageXAksByArbitraryLabeledRelease
+      base:
+        apiVersion: apiextensions.crossplane.io/v1alpha1
+        kind: Usage
+        spec:
+          of:
+            apiVersion: aws.platform.upbound.io/v1alpha1
+            kind: XAKS
+            resourceSelector:
+              matchControllerRef: true
+          by:
+            apiVersion: helm.crossplane.io/v1beta1
+            kind: Release
+            resourceSelector:
+              matchLabels:
+                platform.upbound.io/deletion-ordering: enabled
+      readinessChecks:
+        - type: None
