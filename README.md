@@ -5,23 +5,25 @@ This repository contains a reference Azure Platform Configuration for
 internal cloud platforms with Azure and offer a self-service API to your internal
 development teams.
 
-This platform provides APIs to provision fully configured AKS clusters, with
-secure networking, and stateful cloud services (Azure PostgreSQL) designed to securely
-connect to the nodes in each AKS cluster — all composed using cloud service
-primitives from the [Official Upbound Azure
-Provider](https://marketplace.upbound.io/providers/upbound/provider-azure). App
-deployments can securely connect to the infrastructure they need using secrets
+This platform offers APIs for setting up fully configured AKS clusters
+with secure networking, stateful cloud services (Database) that can securely
+connect to the AKS clusters, an Observability Stack, and a GitOps
+System. All these components are built using cloud service tools from
+the [Official Upbound Family Azure Provider](https://marketplace.upbound.io/providers/upbound/provider-family-azure).
+App deployments can securely connect to the infrastructure they need using secrets
 distributed directly to the app namespace.
 
 ## Overview
 
-This reference platform defines a custom API for creating an AKS cluster
-([XCluster](package/cluster/definition.yaml)) which includes the actual AKS
-cluster, a network fabric and Prometheus and other cluster services
-([XServices](package/cluster/composition.yaml)). Additionally it defines a
-custom API for provisioning Postgres Databases
-([XPostgreSQLInstance](package/database/postgres/definition.yaml)).
+This reference platform outlines a specialized API for generating an AKS cluster
+([XCluster](apis/cluster/definition.yaml)) that incorporates XRs from the specified configurations:
 
+* [upbound-configuration-app](https://github.com/upbound/configuration-app)
+* [upbound-configuration-azure-database](https://github.com/upbound/configuration-azure-database)
+* [upbound-configuration-azure-aks](https://github.com/upbound/configuration-azure-aks)
+* [upbound-configuration-azure-network](https://github.com/upbound/configuration-azure-network)
+* [upbound-configuration-gitops-flux](https://github.com/upbound/configuration-gitops-flux)
+* [upbound-configuration-observability-oss](https://github.com/upbound/configuration-observability-oss)
 
 ```mermaid
 graph LR;
@@ -55,7 +57,7 @@ style Postgres.MRs color:#000,fill:#81CABB,stroke:#000,stroke-width:2px
 ```
 
 Learn more about Composite Resources in the [Crossplane
-Docs](https://crossplane.io/docs/v1.9/concepts/composition.html).
+Docs](https://docs.crossplane.io/latest/concepts/compositions/).
 
 ## Quickstart
 
@@ -73,11 +75,10 @@ curl -sL https://cli.upbound.io | sh
 ```
 See [up docs](https://docs.upbound.io/cli/) for more install options.
 
-For installing the platform we need a running Crossplane control plane. We are
-using [Universal Crossplane (UXP)
-](https://github.com/upbound/universal-crossplane). Ensure that your kubectl
-context is pointing to the correct Kubernetes cluster or for example create a
-[kind](https://kind.sigs.k8s.io) cluster:
+We need a running Crossplane control plane to install our instance. We are
+using [Universal Crossplane (UXP)](https://github.com/upbound/universal-crossplane).
+Ensure that your kubectl context points to the correct Kubernetes cluster or
+create a new [kind](https://kind.sigs.k8s.io) cluster:
 
 ```console
 kind create cluster
@@ -98,11 +99,11 @@ kubectl get all -n upbound-system
 ### Install the Azure Reference Platform
 
 Now you can install this reference platform. It's packaged as a [Crossplane
-configuration package](https://crossplane.io/docs/v1.9/concepts/packages.html)
-so there is a single command to install this package:
+configuration package](https://docs.crossplane.io/latest/concepts/packages/)
+so there is a single command to install it:
 
 ```console
-up ctp configuration install xpkg.upbound.io/upbound/platform-ref-azure:v0.4.1
+up ctp configuration install xpkg.upbound.io/upbound/platform-ref-azure:v0.8.0
 ```
 
 Validate the install by inspecting the provider and configuration packages:
@@ -134,7 +135,7 @@ kubectl create secret generic azure-creds -n upbound-system --from-file=credenti
 kubectl apply -f examples/azure-default-provider.yaml
 ```
 
-See [provider-azure docs](https://marketplace.upbound.io/providers/upbound/provider-azure/latest/docs/configuration) for more detailed configuration options
+See [provider-azure docs](https://docs.upbound.io/providers/provider-azure/authentication/) for more detailed configuration options
 
 ## Using the Azure reference platform
 
@@ -155,6 +156,12 @@ Create a custom defined database:
 kubectl apply -f examples/postgres-claim.yaml
 ```
 
+Now deploy the sample application:
+
+```
+kubectl apply -f examples/app-claim.yaml
+```
+
 You can verify status by inspecting the claims, composites and managed
 resources:
 
@@ -165,23 +172,34 @@ kubectl get claim,composite,managed
 To delete the provisioned resources you would simply delete the claims again:
 
 ```console
-kubectl delete -f examples/cluster-claim.yaml,examples/postgres-claim.yaml
+kubectl delete -f examples/cluster-claim.yaml,examples/postgres-claim.yaml,examples/app-claim.yaml
 ```
 
 To uninstall the provider & platform configuration:
 
 ```console
 kubectl delete configurations.pkg.crossplane.io upbound-platform-ref-azure
-kubectl delete providers.pkg.crossplane.io upbound-provider-azure
+kubectl delete configurations.pkg.crossplane.io upbound-configuration-app
+kubectl delete configurations.pkg.crossplane.io upbound-configuration-azure-database
+kubectl delete configurations.pkg.crossplane.io upbound-configuration-azure-aks
+kubectl delete configurations.pkg.crossplane.io upbound-configuration-azure-network
+kubectl delete configurations.pkg.crossplane.io upbound-configuration-gitops-flux
+kubectl delete configurations.pkg.crossplane.io upbound-configuration-observability-oss
+
 kubectl delete providers.pkg.crossplane.io crossplane-contrib-provider-helm
+kubectl delete providers.pkg.crossplane.io crossplane-contrib-provider-kubernetes
+kubectl delete providers.pkg.crossplane.io grafana-provider-grafana
+kubectl delete providers.pkg.crossplane.io upbound-provider-azure-containerservice
+kubectl delete providers.pkg.crossplane.io upbound-provider-azure-dbformariadb
+kubectl delete providers.pkg.crossplane.io upbound-provider-azure-dbforpostgresql
+kubectl delete providers.pkg.crossplane.io upbound-provider-azure-network
+kubectl delete providers.pkg.crossplane.io upbound-provider-family-azure
 ```
 
 ## Customize for your Organization
 
 So far we have used the existing reference platform but haven't made any
-changes. Lets change this and customize the platform by ensuring that AKS
-Cluster is deployed to Frankfurt (eu-central-1) and that clusters are limitted
-to 10 nodes.
+changes.
 
 For the following examples we are using `my-org` and `my-platform`:
 
@@ -206,10 +224,6 @@ To make your changes clone this repository:
 ```console
 git clone https://github.com/upbound/platform-ref-azure.git $PLATFORM && cd $PLATFORM
 ```
-
-In the [AKS composition](package/cluster/aks/composition.yaml) find the
-`location` definitions and change them from `West US 2` to `West Europe`. Also find the
-`defaultNodePool[0].nodeCount` and change it from `1` to `3`.
 
 ### Build and push your platform
 

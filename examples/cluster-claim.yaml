@@ -10,7 +10,7 @@ spec:
     region: westus
     version: "1.27.3"
     nodes:
-      count: 3
+      count: 1
       instanceType: Standard_B2s
     gitops:
       git:
