@@ -47,9 +47,9 @@ spec:
         - fromFieldPath: spec.parameters.id
           toFieldPath: metadata.name
           transforms:
-          - type: string
-            string:
-              fmt: "%s-aks"
+            - type: string
+              string:
+                fmt: "%s-aks"
         - fromFieldPath: spec.parameters.id
           toFieldPath: spec.forProvider.resourceGroupNameSelector.matchLabels[azure.platform.upbound.io/network-id]
         - fromFieldPath: spec.parameters.id
@@ -65,9 +65,9 @@ spec:
         - fromFieldPath: metadata.uid
           toFieldPath: spec.writeConnectionSecretToRef.name
           transforms:
-          - type: string
-            string:
-              fmt: "%s-akscluster"
+            - type: string
+              string:
+                fmt: "%s-akscluster"
       connectionDetails:
         - fromConnectionSecretKey: kubeconfig
     - name: providerConfigHelm
@@ -87,8 +87,30 @@ spec:
         - fromFieldPath: metadata.uid
           toFieldPath: spec.credentials.secretRef.name
           transforms:
-          - type: string
-            string:
-              fmt: "%s-akscluster"
+            - type: string
+              string:
+                fmt: "%s-akscluster"
+      readinessChecks:
+        - type: None
+    - name: providerConfigKubernetes
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: ProviderConfig
+        spec:
+          credentials:
+            source: Secret
+            secretRef:
+              key: kubeconfig
+      patches:
+        - fromFieldPath: spec.parameters.id
+          toFieldPath: metadata.name
+        - fromFieldPath: spec.writeConnectionSecretToRef.namespace
+          toFieldPath: spec.credentials.secretRef.namespace
+        - fromFieldPath: metadata.uid
+          toFieldPath: spec.credentials.secretRef.name
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-akscluster"
       readinessChecks:
         - type: None
