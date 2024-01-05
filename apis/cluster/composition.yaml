@@ -54,43 +54,72 @@ spec:
           toFieldPath: spec.parameters.nodes.count
         - fromFieldPath: spec.parameters.nodes.instanceType
           toFieldPath: spec.parameters.nodes.instanceType
-    - name: compositeClusterServices
-      base:
-        apiVersion: azure.platformref.upbound.io/v1alpha1
-        kind: XServices
-      patches:
-        - fromFieldPath: spec.parameters.deletionPolicy
-          toFieldPath: spec.deletionPolicy
-        - fromFieldPath: spec.parameters.id
-          toFieldPath: spec.providerConfigRef.name
-        - fromFieldPath: spec.parameters.services.operators.flux.version
-          toFieldPath: spec.operators.flux.version
-        - fromFieldPath: spec.parameters.services.operators.prometheus.version
-          toFieldPath: spec.operators.prometheus.version
-        - fromFieldPath: spec.parameters.gitops.url
-          toFieldPath: spec.gitops.url
-        - fromFieldPath: spec.parameters.gitops.path
-          toFieldPath: spec.gitops.path
-        - fromFieldPath: spec.parameters.gitops.kubeConfigSecretRef.name
-          toFieldPath: spec.gitops.kubeConfigSecretRef.name
-        - fromFieldPath: spec.parameters.gitops.kubeConfigSecretRef.namespace
-          toFieldPath: spec.gitops.kubeConfigSecretRef.namespace
-        - fromFieldPath: spec.parameters.serviceSelector
-          toFieldPath: spec.compositionSelector.matchLabels[type]
 
-    - name: usageXAksByXService
+    - name: XOss
+      base:
+        apiVersion: observe.platform.upbound.io/v1alpha1
+        kind: XOss
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.deletionPolicy
+          toFieldPath: spec.parameters.deletionPolicy
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.id
+          toFieldPath: spec.parameters.id
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.operators.prometheus.version
+          toFieldPath: spec.parameters.operators.prometheus.version
+
+    - name: XFlux
+      base:
+        apiVersion: gitops.platform.upbound.io/v1alpha1
+        kind: XFlux
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.deletionPolicy
+          toFieldPath: spec.parameters.deletionPolicy
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.id
+          toFieldPath: spec.parameters.providerConfigName
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.operators.flux.version
+          toFieldPath: spec.parameters.operators.flux.version
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.operators.flux-sync.version
+          toFieldPath: spec.parameters.operators.flux-sync.version
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.gitops
+          toFieldPath: spec.parameters.source
+
+    - name: usageXEksByXFlux
       base:
         apiVersion: apiextensions.crossplane.io/v1alpha1
         kind: Usage
         spec:
+          by:
+            apiVersion: gitops.platform.upbound.io/v1alpha1
+            kind: XFlux
+            resourceSelector:
+              matchControllerRef: true
           of:
             apiVersion: azure.platformref.upbound.io/v1alpha1
             kind: XAKS
             resourceSelector:
               matchControllerRef: true
+
+    - name: usageXEksByXOss
+      base:
+        apiVersion: apiextensions.crossplane.io/v1alpha1
+        kind: Usage
+        spec:
           by:
+            apiVersion: observe.platform.upbound.io/v1alpha1
+            kind: XOss
+            resourceSelector:
+              matchControllerRef: true
+          of:
             apiVersion: azure.platformref.upbound.io/v1alpha1
-            kind: XServices
+            kind: XAKS
             resourceSelector:
               matchControllerRef: true
 
@@ -100,7 +129,7 @@ spec:
         kind: Usage
         spec:
           of:
-            apiVersion: aws.platform.upbound.io/v1alpha1
+            apiVersion: azure.platformref.upbound.io/v1alpha1
             kind: XAKS
             resourceSelector:
               matchControllerRef: true

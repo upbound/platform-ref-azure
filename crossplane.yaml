@@ -34,15 +34,23 @@ metadata:
       customize to meet the exact needs of your organization!
 spec:
   crossplane:
-    version: ">=v1.12.1-0"
+    version: ">=v1.14.1-0"
   dependsOn:
-    - provider: xpkg.upbound.io/upbound/provider-family-azure
-      version: "v0.37.1"
     - provider: xpkg.upbound.io/upbound/provider-azure-containerservice
-      version: "v0.37.1"
+      # renovate: datasource=github-releases depName=upbound/provider-azure
+      version: "v0.41.0"
     - configuration: xpkg.upbound.io/upbound/configuration-azure-network
-      version: "v0.2.0"
+      # renovate: datasource=github-releases depName=upbound/configuration-azure-network
+      version: "v0.3.0"
     - configuration: xpkg.upbound.io/upbound/configuration-azure-database
-      version: "v0.2.0"
+      # renovate: datasource=github-releases depName=upbound/configuration-azure-database
+      version: "v0.4.0"
     - configuration: xpkg.upbound.io/upbound/configuration-app
-      version: "v0.1.0"
+      # renovate: datasource=github-releases depName=upbound/configuration-app
+      version: "v0.2.0"
+    - configuration: xpkg.upbound.io/upbound/configuration-observability-oss
+      # renovate: datasource=github-releases depName=upbound/configuration-observability-oss
+      version: "v0.2.0"
+    - configuration: xpkg.upbound.io/upbound/configuration-gitops-flux
+      # renovate: datasource=github-releases depName=upbound/configuration-gitops-flux
+      version: "v0.2.0"
