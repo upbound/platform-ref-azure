@@ -10,6 +10,7 @@ spec:
   parameters:
     region: westus
     storageGB: 5 #Minimum value is 5
+    version: "11"
     passwordSecretRef:
       namespace: default
       name: psqlsecret
