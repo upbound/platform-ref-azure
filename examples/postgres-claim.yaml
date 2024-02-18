@@ -1,7 +1,7 @@
 apiVersion: azure.platform.upbound.io/v1alpha1
 kind: SQLInstance
 metadata:
-  name: platform-ref-azure-db-postgresql
+  name: platform-ref-azure-cluster-db-postgresql
   namespace: default
 spec:
   compositionSelector:
@@ -10,14 +10,15 @@ spec:
   parameters:
     region: westus
     storageGB: 5 #Minimum value is 5
+    version: "11"
     passwordSecretRef:
       namespace: default
       name: psqlsecret
       key: password
     networkRef:
-      id: platform-ref-azure #This field must match the cluster XR spec.id
+      id: platform-ref-azure-cluster #This field must match the cluster XR spec.parameters.id
   writeConnectionSecretToRef:
-    name: platform-ref-azure-db-conn-postgresql #Must be unique for each instance
+    name: platform-ref-azure-cluster-db-conn-postgresql #Must be unique for each instance
 ---
 apiVersion: v1
 data:

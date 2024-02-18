@@ -1,16 +1,16 @@
 apiVersion: platform.upbound.io/v1alpha1
 kind: App
 metadata:
-  name: platform-ref-azure-ghost
+  name: platform-ref-azure-cluster-ghost
   namespace: default
   labels:
     platform.upbound.io/deletion-ordering: enabled
 spec:
   compositeDeletePolicy: Foreground
   parameters:
-    providerConfigName: platform-ref-azure
+    providerConfigName: platform-ref-azure-cluster
     passwordSecretRef:
       namespace: default
-      name: platform-ref-azure-db-conn-mariadb
+      name: platform-ref-azure-cluster-db-conn-mariadb
   writeConnectionSecretToRef:
-    name: platform-ref-azure-app-conn
+    name: platform-ref-azure-cluster-app-conn
