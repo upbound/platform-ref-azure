@@ -59,10 +59,11 @@ spec:
                       type: string
                       description: Kubernetes version of the Cluster
                       enum:
-                        - "1.27.3"
-                        - "1.26.6"
-                        - "1.25.11"
-                      default: "1.27.3"
+                        - "1.29"
+                        - "1.28"
+                        - "1.27"
+                        - "1.26"
+                      default: "1.28"
                     nodes:
                       type: object
                       description: Cluster node configuration parameters.
