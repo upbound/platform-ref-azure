@@ -38,7 +38,7 @@ spec:
   dependsOn:
     - provider: xpkg.upbound.io/upbound/provider-azure-containerservice
       # renovate: datasource=github-releases depName=upbound/provider-azure
-      version: "v0.42.1"
+      version: "v1.4.0"
     - configuration: xpkg.upbound.io/upbound/configuration-azure-network
       # renovate: datasource=github-releases depName=upbound/configuration-azure-network
       version: "v0.8.0"
