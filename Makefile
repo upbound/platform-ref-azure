@@ -11,7 +11,7 @@ PLATFORMS ?= linux_amd64
 # ====================================================================================
 # Setup Kubernetes tools
 
-UP_VERSION = v0.31.0
+UP_VERSION = v0.34.2
 UP_CHANNEL = stable
 UPTEST_VERSION = v0.11.1
 
