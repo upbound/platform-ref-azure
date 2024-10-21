@@ -75,6 +75,8 @@ curl -sL https://cli.upbound.io | sh
 ```
 See [up docs](https://docs.upbound.io/cli/) for more install options.
 
+To intstall `crossplane` CLI follow https://docs.crossplane.io/latest/cli/#installing-the-cli
+
 We need a running Crossplane control plane to install our instance. We are
 using [Universal Crossplane (UXP)](https://github.com/upbound/universal-crossplane).
 Ensure that your kubectl context points to the correct Kubernetes cluster or
@@ -87,8 +89,11 @@ kind create cluster
 Finally install UXP into the `upbound-system` namespace:
 
 ```console
-up uxp install
+up uxp install --set='args[0]=--enable-usages'
 ```
+
+We will need [Usages](https://docs.crossplane.io/latest/concepts/usages/) alpha feature
+for the correct deployment and eventual de-provisioning of this reference platform.
 
 You can validate the install by inspecting all installed components:
 
@@ -103,14 +108,20 @@ configuration package](https://docs.crossplane.io/latest/concepts/packages/)
 so there is a single command to install it:
 
 ```console
-up ctp configuration install xpkg.upbound.io/upbound/platform-ref-azure:v0.8.0
+up ctp configuration install xpkg.upbound.io/upbound/platform-ref-azure:v0.12.0
 ```
 
 Validate the install by inspecting the provider and configuration packages:
 ```console
-kubectl get providers,providerrevision
-
 kubectl get configurations,configurationrevisions
+kubectl get configurations --watch
+```
+
+After all Configurations are ready, you can check the status of associated
+Providers that were pulled as dependencies
+
+```console
+kubectl get providers,providerrevision
 ```
 
 Check the
@@ -153,14 +164,19 @@ kubectl apply -f https://raw.githubusercontent.com/upbound/platform-ref-azure/ma
 
 Create a custom defined database:
 ```console
-kubectl apply -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/postgres-claim.yaml
+kubectl apply -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/mariadb-claim.yaml
 ```
+
+**NOTE**: The database abstraction relies on the cluster claim to be ready - it
+uses the same network to have connectivity with the AKS cluster.
 
 Now deploy the sample application:
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/app-claim.yaml
 ```
+
+**NOTE**: application has a strong dependency on mariadb type of the database
 
 You can verify status by inspecting the claims, composites and managed
 resources:
@@ -169,10 +185,17 @@ resources:
 kubectl get claim,composite,managed
 ```
 
+To get nice representation of the Claim deployment status you can use
+[crossplane beta trace](https://docs.crossplane.io/latest/cli/command-reference/#beta-trace) command
+
+```console
+crossplane beta trace cluster.aws.platformref.upbound.io/platform-ref-aws
+```
+
 To delete the provisioned resources you would simply delete the claims again:
 
 ```console
-kubectl delete -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/cluster-claim.yaml,https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/postgres-claim.yaml,https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/app-claim.yaml
+kubectl delete -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/cluster-claim.yaml,https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/mariadb-claim.yaml,https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/app-claim.yaml
 ```
 
 To uninstall the provider & platform configuration:
@@ -214,7 +237,7 @@ account](https://accounts.upbound.io/register) to push your custom platform.
 Afterwards you can log in:
 
 ```console
-up login --username=$ORG
+up login
 ```
 
 ### Make the changes
@@ -232,31 +255,22 @@ To share your new platform you need to build and distribute this package.
 To build the package use the `up xpkg build` command:
 
 ```console
-up xpkg build --name package.xpkg --package-root=package --examples-root=examples
+up xpkg build --name package.xpkg --package-root=. --examples-root=examples --ignore=".github/workflows/*.yaml,.github/workflows/*.yml,examples/*.yaml,.work/uptest-datasource.yaml"
 ```
 
-Afterwards you can it to the marketplace. Don't worry it's private to you.
+Afterwards you can push it to the marketplace. It will be not automatically
+listed but the OCI repository will be publicly accessible.
 
 ```console
 TAG=v0.1.0
-up repo create ${PLATFORM}
-up xpkg push ${ORG}/${PLATFORM}:${TAG} -f package/package.xpkg
-```
-
-You can now see your listing in the marketplace:
-```console
-open https://marketplace.upbound.io/configurations/${ORG}/${PLATFORM}/${TAG}
+up repo -a $ORG create ${PLATFORM}
+up xpkg push ${ORG}/${PLATFORM}:${TAG} -f package.xpkg
 ```
 
 ## Using your custom platform
 
-Now if you want to use it you can follow the steps from above. The only
-difference is that you need to specify a package-pull-secret as the package is
-currently private:
-
-```console
-up ctp pull-secret create personal-pull-secret
-```
+Now to use your custom platform, you can pull the Configuration package from
+your repository
 
 ```console
 up ctp configuration install xpkg.upbound.io/${ORG}/${PLATFORM}:${TAG} --package-pull-secrets=personal-pull-secret
