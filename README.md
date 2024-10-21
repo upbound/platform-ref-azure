@@ -148,18 +148,18 @@ the application code. In our example here we simply create the claims directly:
 
 Create a custom defined cluster:
 ```console
-kubectl apply -f examples/cluster-claim.yaml
+kubectl apply -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/cluster-claim.yaml
 ```
 
 Create a custom defined database:
 ```console
-kubectl apply -f examples/postgres-claim.yaml
+kubectl apply -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/postgres-claim.yaml
 ```
 
 Now deploy the sample application:
 
 ```
-kubectl apply -f examples/app-claim.yaml
+kubectl apply -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/app-claim.yaml
 ```
 
 You can verify status by inspecting the claims, composites and managed
@@ -172,7 +172,7 @@ kubectl get claim,composite,managed
 To delete the provisioned resources you would simply delete the claims again:
 
 ```console
-kubectl delete -f examples/cluster-claim.yaml,examples/postgres-claim.yaml,examples/app-claim.yaml
+kubectl delete -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/cluster-claim.yaml,https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/postgres-claim.yaml,https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/app-claim.yaml
 ```
 
 To uninstall the provider & platform configuration:
