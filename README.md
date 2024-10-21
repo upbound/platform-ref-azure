@@ -159,12 +159,12 @@ the application code. In our example here we simply create the claims directly:
 
 Create a custom defined cluster:
 ```console
-kubectl apply -f examples/cluster-claim.yaml
+kubectl apply -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/cluster-claim.yaml
 ```
 
 Create a custom defined database:
 ```console
-kubectl apply -f examples/mariadb-claim.yaml
+kubectl apply -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/mariadb-claim.yaml
 ```
 
 **NOTE**: The database abstraction relies on the cluster claim to be ready - it
@@ -173,7 +173,7 @@ uses the same network to have connectivity with the AKS cluster.
 Now deploy the sample application:
 
 ```
-kubectl apply -f examples/app-claim.yaml
+kubectl apply -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/app-claim.yaml
 ```
 
 **NOTE**: application has a strong dependency on mariadb type of the database
@@ -195,7 +195,7 @@ crossplane beta trace cluster.aws.platformref.upbound.io/platform-ref-aws
 To delete the provisioned resources you would simply delete the claims again:
 
 ```console
-kubectl delete -f examples/cluster-claim.yaml,examples/mariadb-claim.yaml,examples/app-claim.yaml
+kubectl delete -f https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/cluster-claim.yaml,https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/mariadb-claim.yaml,https://raw.githubusercontent.com/upbound/platform-ref-azure/main/examples/app-claim.yaml
 ```
 
 To uninstall the provider & platform configuration:
