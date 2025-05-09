@@ -38,13 +38,13 @@ spec:
   dependsOn:
     - configuration: xpkg.upbound.io/upbound/configuration-azure-network
       # renovate: datasource=github-releases depName=upbound/configuration-azure-network
-      version: "v0.14.0"
+      version: "v0.17.0"
     - configuration: xpkg.upbound.io/upbound/configuration-azure-aks
       # renovate: datasource=github-releases depName=upbound/configuration-azure-aks
-      version: "v0.12.0"
+      version: "v0.15.0"
     - configuration: xpkg.upbound.io/upbound/configuration-azure-database
       # renovate: datasource=github-releases depName=upbound/configuration-azure-database
-      version: "v0.15.0"
+      version: "v0.17.0"
     - configuration: xpkg.upbound.io/upbound/configuration-app
       # renovate: datasource=github-releases depName=upbound/configuration-app
       version: "v0.11.0"
