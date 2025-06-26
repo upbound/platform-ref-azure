@@ -7,3 +7,4 @@
 *.xpkg
 kubeconfig
 crossplane-azure-provider-key.json
+.up
