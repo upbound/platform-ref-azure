@@ -16,16 +16,16 @@ _metadata = lambda name: str -> any {
 }
 
 # Extract parameters from the observed composite resource (XR)
-_id = oxr.spec?.parameters?.id or ""
-_region = oxr.spec?.parameters?.region or ""
+_id = oxr.spec?.parameters?.id
+_region = oxr.spec?.parameters?.region
 _deletionPolicy = oxr.spec?.parameters?.deletionPolicy or "Delete"
 _providerConfigName = oxr.spec?.parameters?.providerConfigName or "default"
-_version = oxr.spec?.parameters?.version or "1.31"
+_version = oxr.spec?.parameters?.version
 _nodeCount = oxr.spec?.parameters?.nodes?.count or 1
-_instanceType = oxr.spec?.parameters?.nodes?.instanceType or "Standard_B2s"
-_fluxVersion = oxr.spec?.parameters?.operators?.flux?.version or "2.10.6"
-_fluxSyncVersion = oxr.spec?.parameters?.operators?.fluxSync?.version or "1.7.2"
-_prometheusVersion = oxr.spec?.parameters?.operators?.prometheus?.version or "52.1.0"
+_instanceType = oxr.spec?.parameters?.nodes?.instanceType
+_fluxVersion = oxr.spec?.parameters?.operators?.flux?.version
+_fluxSyncVersion = oxr.spec?.parameters?.operators?.fluxSync?.version
+_prometheusVersion = oxr.spec?.parameters?.operators?.prometheus?.version 
 _gitops = oxr.spec?.parameters?.gitops or {}
 
 _items = [
