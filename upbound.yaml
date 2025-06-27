@@ -7,11 +7,11 @@ spec:
   - configuration: xpkg.upbound.io/upbound/configuration-app
     version: v0.12.1
   - configuration: xpkg.upbound.io/upbound/configuration-azure-network
-    version: v0.0.0-1750975148
+    version: v0.18.0
   - configuration: xpkg.upbound.io/upbound/configuration-azure-aks
-    version: v0.0.0-1750975216
+    version: v0.16.0
   - configuration: xpkg.upbound.io/upbound/configuration-azure-database
-    version: v0.0.0-1751037017
+    version: v0.18.0
   - configuration: xpkg.upbound.io/upbound/configuration-observability-oss
     version: v0.10.1
   - configuration: xpkg.upbound.io/upbound/configuration-gitops-flux
