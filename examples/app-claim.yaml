@@ -11,6 +11,6 @@ spec:
     providerConfigName: platform-ref-azure-cluster
     passwordSecretRef:
       namespace: default
-      name: platform-ref-azure-cluster-db-conn-mariadb
+      name: platform-ref-azure-cluster-db-conn-mysql
   writeConnectionSecretToRef:
     name: platform-ref-azure-cluster-app-conn

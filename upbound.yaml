@@ -1,0 +1,35 @@
+apiVersion: meta.dev.upbound.io/v1alpha1
+kind: Project
+metadata:
+  name: platform-ref-azure
+spec:
+  dependsOn:
+  - configuration: xpkg.upbound.io/upbound/configuration-app
+    version: v0.12.1
+  - configuration: xpkg.upbound.io/upbound/configuration-azure-network
+    version: v0.18.0
+  - configuration: xpkg.upbound.io/upbound/configuration-azure-aks
+    version: v0.16.0
+  - configuration: xpkg.upbound.io/upbound/configuration-azure-database
+    version: v0.18.0
+  - configuration: xpkg.upbound.io/upbound/configuration-observability-oss
+    version: v0.10.1
+  - configuration: xpkg.upbound.io/upbound/configuration-gitops-flux
+    version: v0.11.0
+  - function: xpkg.upbound.io/crossplane-contrib/function-auto-ready
+    version: '>=v0.0.0'
+  description: |
+    This reference platform Configuration for Kubernetes and Data Services
+    is a starting point to build, run, and operate your own internal cloud
+    platform and offer a self-service console and API to your internal teams.
+  license: Apache-2.0
+  maintainer: Upbound <support@upbound.io>
+  readme: |
+    This reference platform Configuration for Kubernetes and Data Services
+    is a starting point to build, run, and operate your own internal cloud
+    platform and offer a self-service console and API to your internal teams.
+    It provides platform APIs to provision fully configured AKS clusters,
+    with secure networking, and stateful cloud services designed to
+    securely connect to the nodes in each AKS cluster.
+  repository: xpkg.upbound.io/upbound/platform-ref-azure
+  source: github.com/upbound/platform-ref-azure

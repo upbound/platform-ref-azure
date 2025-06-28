@@ -38,12 +38,6 @@ spec:
                     region:
                       type: string
                       description: Region is the region you'd like your resource to be created in.
-                    networkSelector:
-                      type: string
-                      description: NetworkSelector employs a specific type of network architecture.
-                      enum:
-                        - basic
-                      default: basic
                     deletionPolicy:
                       description: Delete the external resources when the Claim/XR is deleted. Defaults to Delete
                       enum:
@@ -83,7 +77,7 @@ spec:
                       default:
                         flux:
                           version: "2.10.6"
-                        flux-sync:
+                        fluxSync:
                           version: "1.7.2"
                         prometheus:
                           version: "52.1.0"
@@ -98,7 +92,7 @@ spec:
                               default: "2.10.6"
                           required:
                             - version
-                        flux-sync:
+                        fluxSync:
                           description: Configuration for the Flux Sync Helm-Chart.
                           type: object
                           properties:
