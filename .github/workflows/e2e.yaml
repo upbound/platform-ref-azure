@@ -1,15 +1,51 @@
 name: End to End Testing
 
 on:
-  issue_comment:
-    types: [created]
-  pull_request:
-    types: [labeled]
+  # https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/
+  # pull_request_target is potentially dangerous target so we keep it strict
+  # under the label and benefit from secret propagation
+  pull_request_target:
+    types:
+      - synchronize
+      - labeled
+
+env:
+  UP_API_TOKEN: ${{ secrets.UP_E2E_API_TOKEN || secrets.UP_API_TOKEN }}
+  UP_ORG: ${{ secrets.UP_E2E_ORG || secrets.UP_ORG }}
+  UP_GROUP: ${{ secrets.UP_E2E_GROUP || secrets.UP_GROUP || 'default' }}
+  UP_ROBOT_ID: ${{ secrets.UP_E2E_ROBOT_ID || secrets.UP_ROBOT_ID }}
+
 jobs:
   e2e:
-    uses: upbound/official-providers-ci/.github/workflows/pr-comment-trigger.yml@main
-    with:
-      package-type: configuration
-    secrets:
-      UPTEST_CLOUD_CREDENTIALS: ${{ secrets.UPTEST_CLOUD_CREDENTIALS }}
-      UPTEST_DATASOURCE: ${{ secrets.UPTEST_DATASOURCE }}
+    if: contains(github.event.pull_request.labels.*.name, 'run-e2e-tests')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Install and login with up
+        if: env.UP_API_TOKEN != '' && env.UP_ORG != ''
+        uses: upbound/action-up@53fe6395637d884c80d2bbc8c2d75d0ece776ced # v1
+        with:
+          api-token: ${{ env.UP_API_TOKEN }}
+          organization: ${{ env.UP_ORG }}
+
+      # doesn't work with plain token when pushing otherwise
+      - name: Login to xpkg with robot
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
+        with:
+          registry: xpkg.upbound.io
+          username: ${{ env.UP_ROBOT_ID }}
+          password: ${{ env.UP_API_TOKEN }}
+
+      - name: Build project
+        run: up project build
+
+      - name: Switch up context
+        run: up ctx ${{ env.UP_ORG }}/upbound-gcp-us-central-1/${{ env.UP_GROUP }}
+
+      - name: Run e2e tests
+        run: up test run tests/* --e2e
