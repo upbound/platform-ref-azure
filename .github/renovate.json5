@@ -39,15 +39,9 @@
     },
     {
       matchFileNames: [
-        'crossplane.yaml',
+        'upbound.yaml',
       ],
       groupName: 'crossplane dependencies',
-    },
-    {
-      matchFileNames: [
-        'Makefile',
-      ],
-      groupName: 'Makefile dependencies',
     },
     {
       matchManagers: ['crossplane'],
@@ -58,33 +52,9 @@
   customManagers: [
     {
       customType: 'regex',
-      description: 'Bump up version in the Makefile',
+      description: 'Bump providers/functions/configurations in upbound.yaml',
       fileMatch: [
-        '^Makefile$',
-      ],
-      matchStrings: [
-        'UP_VERSION = (?<currentValue>.*?)\\n',
-      ],
-      datasourceTemplate: 'github-releases',
-      depNameTemplate: 'upbound/up',
-    },
-    {
-      customType: 'regex',
-      description: 'Bump uptest version in the Makefile',
-      fileMatch: [
-        '^Makefile$',
-      ],
-      matchStrings: [
-        'UPTEST_VERSION = (?<currentValue>.*?)\\n',
-      ],
-      datasourceTemplate: 'github-releases',
-      depNameTemplate: 'upbound/uptest',
-    },
-    {
-      customType: 'regex',
-      description: 'Bump providers/functions/configurations in crossplane.yaml',
-      fileMatch: [
-        'crossplane.yaml',
+        'upbound.yaml',
       ],
       matchStrings: [
         '#\\s*renovate:\\s*datasource=(?<datasource>[^\\s]+)\\s+depName=(?<depName>[^\\s]+)\\s*\\n\\s*version:\\s*"(?<currentValue>[^"]+)"',
