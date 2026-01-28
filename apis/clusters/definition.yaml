@@ -1,22 +1,18 @@
-apiVersion: apiextensions.crossplane.io/v1
+apiVersion: apiextensions.crossplane.io/v2
 kind: CompositeResourceDefinition
 metadata:
-  name: xclusters.azure.platformref.upbound.io
+  name: clusters.azure.platformref.upbound.io
 spec:
+  scope: Namespaced
   # We require Foreground Deletion for cases where XRs are generated without a Claim, like in XServices.
   # In such situations, XService is deleted right away,
-  # taking the Usage and XAKS with it,
+  # taking the Usage and AKS with it,
   # which causes issues for Release.helm's deletion process.
   defaultCompositeDeletePolicy: Foreground
   group: azure.platformref.upbound.io
   names:
-    kind: XCluster
-    plural: xclusters
-  claimNames:
     kind: Cluster
     plural: clusters
-  connectionSecretKeys:
-    - kubeconfig
   versions:
     - name: v1alpha1
       served: true
@@ -38,13 +34,19 @@ spec:
                     region:
                       type: string
                       description: Region is the region you'd like your resource to be created in.
-                    deletionPolicy:
-                      description: Delete the external resources when the Claim/XR is deleted. Defaults to Delete
-                      enum:
-                        - Delete
-                        - Orphan
-                      type: string
-                      default: Delete
+                    managementPolicies:
+                      description: "ManagementPolicies for resources. Defaults to [\"*\"] which includes all operations (Create, Observe, Update, Delete, LateInitialize). To orphan resources on deletion, use [\"Create\", \"Observe\", \"Update\", \"LateInitialize\"]."
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                          - "*"
+                          - Create
+                          - Observe
+                          - Update
+                          - Delete
+                          - LateInitialize
+                      default: ["*"]
                     providerConfigName:
                       description: Crossplane ProviderConfig to use for provisioning this resources
                       type: string
@@ -53,10 +55,10 @@ spec:
                       type: string
                       description: Kubernetes version of the Cluster
                       enum:
-                        - "1.31"
-                        - "1.30"
-                        - "1.29"
-                      default: "1.31"
+                        - "1.34"
+                        - "1.33"
+                        - "1.32"
+                      default: "1.34"
                     nodes:
                       type: object
                       description: Cluster node configuration parameters.
@@ -161,7 +163,7 @@ spec:
                       required:
                         - git
                   required:
-                    - deletionPolicy
+                    - managementPolicies
                     - gitops
                     - id
                     - nodes

@@ -3,20 +3,21 @@ import models.io.upbound.dev.meta.v1alpha1 as metav1alpha1
 import models.io.upbound.platform.azure.v1alpha1 as platformazurev1alpha1
 import models.io.upbound.platform.gitops.v1alpha1 as gitopsv1alpha1
 import models.io.upbound.platform.observe.v1alpha1 as observev1alpha1
+import models.io.crossplane.protection.v1beta1 as protectionv1beta1
 
 _items = [
     metav1alpha1.CompositionTest{
-        metadata.name: "test-xcluster"
+        metadata.name: "test-cluster"
         spec = {
             assertResources: [
-                # XNetwork for Azure networking
-                platformazurev1alpha1.XNetwork{
+                # Network for Azure networking
+                platformazurev1alpha1.Network{
                     metadata.name: "composite-network-aks"
                     spec = {
                         parameters = {
                             id: "platform-ref-azure-cluster"
                             region: "westus"
-                            deletionPolicy: "Delete"
+                            managementPolicies: ["*"]
                             providerConfigName: "default"
                             addressRange: "10.1.0.0/16"
                             generalSubnetRange: "10.1.1.0/24"
@@ -29,38 +30,34 @@ _items = [
                         }
                     }
                 },
-                # XAKS for Azure Kubernetes Service
-                platformazurev1alpha1.XAKS{
+                # AKS for Azure Kubernetes Service
+                platformazurev1alpha1.AKS{
                     metadata = {
                         name: "composite-cluster-aks"
                         labels = {
-                            "xaks.azure.platform.upbound.io/cluster-id": "platform-ref-azure-cluster"
+                            "aks.azure.platform.upbound.io/cluster-id": "platform-ref-azure-cluster"
                         }
                     }
                     spec = {
                         parameters = {
                             id: "platform-ref-azure-cluster"
                             region: "westus"
-                            deletionPolicy: "Delete"
+                            managementPolicies: ["*"]
                             providerConfigName: "default"
-                            version: "1.31"
+                            version: "1.34"
                             nodes = {
                                 count: 1
                                 instanceType: "Standard_B2s"
                             }
                         }
-                        writeConnectionSecretToRef = {
-                            name: "platform-ref-azure-cluster-aks"
-                            namespace: "default"
-                        }
                     }
                 },
-                # XOss for observability stack
-                observev1alpha1.XOss{
+                # Oss for observability stack
+                observev1alpha1.Oss{
                     metadata.name: "composite-observability-oss"
                     spec = {
                         parameters = {
-                            deletionPolicy: "Delete"
+                            managementPolicies: ["*"]
                             id: "platform-ref-azure-cluster"
                             operators = {
                                 prometheus = {
@@ -70,12 +67,12 @@ _items = [
                         }
                     }
                 },
-                # XFlux for GitOps
-                gitopsv1alpha1.XFlux{
+                # Flux for GitOps
+                gitopsv1alpha1.Flux{
                     metadata.name: "composite-flux"
                     spec = {
                         parameters = {
-                            deletionPolicy: "Delete"
+                            managementPolicies: ["*"]
                             providerConfigName: "platform-ref-azure-cluster"
                             operators = {
                                 flux = {
@@ -99,53 +96,56 @@ _items = [
                         }
                     }
                 },
-                # Usage resources for deletion ordering (untyped objects)
-                {
-                    apiVersion: "apiextensions.crossplane.io/v1alpha1"
-                    kind: "Usage"
-                    metadata.name: "usage-xeks-by-xflux"
+                # Usage resources for deletion ordering (typed models)
+                protectionv1beta1.Usage{
+                    metadata = {
+                        name: "usage-aks-by-flux"
+                        namespace: "default"
+                    }
                     spec = {
                         by = {
                             apiVersion: "gitops.platform.upbound.io/v1alpha1"
-                            kind: "XFlux"
+                            kind: "Flux"
                             resourceSelector = {
                                 matchControllerRef: True
                             }
                         }
                         of = {
                             apiVersion: "azure.platform.upbound.io/v1alpha1"
-                            kind: "XAKS"
+                            kind: "AKS"
                             resourceSelector = {
                                 matchControllerRef: True
                             }
                         }
                     }
                 },
-                {
-                    apiVersion: "apiextensions.crossplane.io/v1alpha1"
-                    kind: "Usage"
-                    metadata.name: "usage-xeks-by-xoss"
+                protectionv1beta1.Usage{
+                    metadata = {
+                        name: "usage-aks-by-oss"
+                        namespace: "default"
+                    }
                     spec = {
                         by = {
                             apiVersion: "observe.platform.upbound.io/v1alpha1"
-                            kind: "XOss"
+                            kind: "Oss"
                             resourceSelector = {
                                 matchControllerRef: True
                             }
                         }
                         of = {
                             apiVersion: "azure.platform.upbound.io/v1alpha1"
-                            kind: "XAKS"
+                            kind: "AKS"
                             resourceSelector = {
                                 matchControllerRef: True
                             }
                         }
                     }
                 },
-                {
-                    apiVersion: "apiextensions.crossplane.io/v1alpha1"
-                    kind: "Usage"
-                    metadata.name: "usage-xaks-by-arbitrary-labeled-release"
+                protectionv1beta1.Usage{
+                    metadata = {
+                        name: "usage-aks-by-arbitrary-labeled-release"
+                        namespace: "default"
+                    }
                     spec = {
                         by = {
                             apiVersion: "helm.crossplane.io/v1beta1"
@@ -158,7 +158,7 @@ _items = [
                         }
                         of = {
                             apiVersion: "azure.platform.upbound.io/v1alpha1"
-                            kind: "XAKS"
+                            kind: "AKS"
                             resourceSelector = {
                                 matchControllerRef: True
                             }
@@ -166,9 +166,9 @@ _items = [
                     }
                 }
             ]
-            compositionPath: "apis/xclusters/composition.yaml"
-            xrPath: "examples/xr-cluster.yaml"
-            xrdPath: "apis/xclusters/definition.yaml"
+            compositionPath: "apis/clusters/composition.yaml"
+            xrPath: "examples/cluster-xr.yaml"
+            xrdPath: "apis/clusters/definition.yaml"
             timeoutSeconds: 120
             validate: False
         }

@@ -24,7 +24,7 @@ This platform uses **Upbound DevEx** with:
 ## Overview
 
 This reference platform outlines a specialized API for generating an AKS cluster
-([XCluster](apis/xclusters/definition.yaml)) that incorporates XRs from the specified configurations:
+([Cluster](apis/clusters/definition.yaml)) that incorporates XRs from the specified configurations:
 
 * [upbound-configuration-app](https://github.com/upbound/configuration-app)
 * [upbound-configuration-azure-database](https://github.com/upbound/configuration-azure-database)
@@ -35,12 +35,12 @@ This reference platform outlines a specialized API for generating an AKS cluster
 
 ```mermaid
 graph LR;
-    MyApp(My App)---MyCluster(XRC: my-cluster);
-    MyCluster---XRD1(XRD: XCluster);
-    MyApp---MyDB(XRC: my-db);
-    MyDB---XRD2(XRD: XSQLInstance);
+    MyApp(My App)---MyCluster(XR: my-cluster);
+    MyCluster---XRD1(XRD: Cluster);
+    MyApp---MyDB(XR: my-db);
+    MyDB---XRD2(XRD: SQLInstance);
 		subgraph Configuration:upbound/platform-ref-azure;
-	    XRD1---Composition(XAKS, XNetwork, XServices);
+	    XRD1---Composition(AKS, Network, Services);
 	    XRD2---Composition2(Composition);
 		end
 		subgraph Provider:upbound/provider-azure
@@ -65,7 +65,7 @@ style Postgres.MRs color:#000,fill:#81CABB,stroke:#000,stroke-width:2px
 ```
 
 Learn more about Composite Resources in the [Crossplane
-Docs](https://docs.crossplane.io/latest/concepts/compositions/).
+Docs](https://docs.crossplane.io/latest/composition/compositions/).
 
 ## Quickstart
 
@@ -89,7 +89,7 @@ up project build
 up test run tests/*
 
 # Render compositions with examples
-up composition render apis/xclusters/definition.yaml apis/xclusters/composition.yaml examples/cluster-claim.yaml
+up composition render apis/clusters/definition.yaml apis/clusters/composition.yaml examples/cluster-xr.yaml
 ```
 
 ## Using the Platform
@@ -98,19 +98,19 @@ Once installed, you can create platform resources using the provided examples:
 
 ```console
 # Create a cluster with networking, observability, and GitOps
-kubectl apply -f examples/cluster-claim.yaml
+kubectl apply -f examples/cluster-xr.yaml
 
 # Create a MySQL database (after cluster is ready)
-kubectl apply -f examples/mysql-claim.yaml
+kubectl apply -f examples/mysql-xr.yaml
 
 # Deploy a sample application
-kubectl apply -f examples/app-claim.yaml
+kubectl apply -f examples/app-xr.yaml
 ```
 
 Monitor deployment status:
 
 ```console
-kubectl get claim,composite,managed
+kubectl get composite,managed
 ```
 
 ## Development

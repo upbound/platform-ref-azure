@@ -6,11 +6,14 @@ metadata:
   labels:
     platform.upbound.io/deletion-ordering: enabled
 spec:
-  compositeDeletePolicy: Foreground
   parameters:
+    helm:
+      chart:
+        name: ghost
+        repo: "oci://registry-1.docker.io/bitnamicharts"
+        version: 25.0.4
+      wait: false
     providerConfigName: platform-ref-azure-cluster
     passwordSecretRef:
       namespace: default
       name: platform-ref-azure-cluster-db-conn-mysql
-  writeConnectionSecretToRef:
-    name: platform-ref-azure-cluster-app-conn

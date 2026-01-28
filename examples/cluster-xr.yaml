@@ -1,12 +1,13 @@
 apiVersion: azure.platformref.upbound.io/v1alpha1
-kind: XCluster
+kind: Cluster
 metadata:
   name: platform-ref-azure-cluster
+  namespace: default
 spec:
   parameters:
     id: platform-ref-azure-cluster
     region: westus
-    version: "1.31"
+    version: "1.34"
     nodes:
       count: 1
       instanceType: Standard_B2s
@@ -18,6 +19,3 @@ spec:
         interval: 5m0s
         timeout: 60s
         path: /
-  writeConnectionSecretToRef:
-    name: platform-ref-azure-cluster-kubeconfig
-    namespace: default

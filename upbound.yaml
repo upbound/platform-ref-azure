@@ -1,22 +1,45 @@
-apiVersion: meta.dev.upbound.io/v1alpha1
+apiVersion: meta.dev.upbound.io/v2alpha1
 kind: Project
 metadata:
   name: platform-ref-azure
 spec:
+  apiDependencies:
+  - k8s:
+      version: v1.33.0
+    type: k8s
+  - git:
+      path: cluster/crds
+      ref: release-2.1
+      repository: https://github.com/crossplane/crossplane
+    type: crd
   dependsOn:
-  - configuration: xpkg.upbound.io/upbound/configuration-app
-    version: v0.12.1
-  - configuration: xpkg.upbound.io/upbound/configuration-azure-network
-    version: v0.18.0
-  - configuration: xpkg.upbound.io/upbound/configuration-azure-aks
-    version: v0.16.0
-  - configuration: xpkg.upbound.io/upbound/configuration-azure-database
-    version: v0.18.0
-  - configuration: xpkg.upbound.io/upbound/configuration-observability-oss
-    version: v0.10.1
-  - configuration: xpkg.upbound.io/upbound/configuration-gitops-flux
-    version: v0.11.0
-  - function: xpkg.upbound.io/crossplane-contrib/function-auto-ready
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Configuration
+    package: xpkg.upbound.io/upbound/configuration-app
+    version: v2.1.0
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Configuration
+    package: xpkg.upbound.io/upbound/configuration-azure-network
+    version: v2.0.0
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Configuration
+    package: xpkg.upbound.io/upbound/configuration-azure-aks
+    version: v2.0.0
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Configuration
+    package: xpkg.upbound.io/upbound/configuration-azure-database
+    version: v2.0.0
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Configuration
+    package: xpkg.upbound.io/upbound/configuration-observability-oss
+    version: v2.0.0
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Configuration
+    package: xpkg.upbound.io/upbound/configuration-gitops-flux
+    version: v2.0.0
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Function
+    package: xpkg.upbound.io/crossplane-contrib/function-auto-ready
     version: '>=v0.0.0'
   description: |
     This reference platform Configuration for Kubernetes and Data Services

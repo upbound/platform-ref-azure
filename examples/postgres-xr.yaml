@@ -4,15 +4,15 @@ metadata:
   name: platform-ref-azure-cluster-db-postgresql
   namespace: default
 spec:
-  compositionSelector:
-    matchLabels:
-      dbengine: postgres
+  crossplane:
+    compositionSelector:
+      matchLabels:
+        dbengine: postgres
   parameters:
     region: westus
     storageGB: 5 #Minimum value is 5
     version: "11"
     passwordSecretRef:
-      namespace: default
       name: psqlsecret
       key: password
     networkRef:
