@@ -148,7 +148,7 @@ _items = [
                     }
                     spec = {
                         by = {
-                            apiVersion: "helm.crossplane.io/v1beta1"
+                            apiVersion: "helm.m.crossplane.io/v1beta1"
                             kind: "Release"
                             resourceSelector = {
                                 matchLabels = {
