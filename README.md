@@ -113,6 +113,56 @@ Monitor deployment status:
 kubectl get composite,managed
 ```
 
+### Accessing Your Application
+
+Once your Ghost application is deployed, you can access it using one of these methods:
+
+#### Option 1: Via LoadBalancer (External IP)
+
+Get the AKS cluster kubeconfig and access Ghost:
+
+```bash
+# Get the kubeconfig from the AKS connection secret
+kubectl get secret <cluster-id>-akscluster -n default -o jsonpath='{.data.kubeconfig}' | base64 -d > /tmp/aks-kubeconfig
+
+# Use the AKS kubeconfig to check Ghost service
+export KUBECONFIG=/tmp/aks-kubeconfig
+kubectl get svc -n ghost -l app.kubernetes.io/name=ghost
+kubectl get pods -n ghost
+
+# Get the external IP
+EXTERNAL_IP=$(kubectl get svc -n ghost -l app.kubernetes.io/name=ghost -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')
+echo "Ghost Frontend: http://$EXTERNAL_IP"
+echo "Ghost Admin: http://$EXTERNAL_IP/ghost"
+```
+
+Then access:
+- **Frontend**: `http://<EXTERNAL-IP>` (Your blog)
+- **Admin**: `http://<EXTERNAL-IP>/ghost` (Admin interface)
+
+#### Option 2: Via kubectl port-forward (No external IP needed)
+
+```bash
+# Get the kubeconfig
+kubectl get secret <cluster-id>-akscluster -n default -o jsonpath='{.data.kubeconfig}' | base64 -d > /tmp/aks-kubeconfig
+export KUBECONFIG=/tmp/aks-kubeconfig
+
+# Forward Ghost service to local port 8080
+kubectl port-forward -n ghost svc/$(kubectl get svc -n ghost -l app.kubernetes.io/name=ghost -o jsonpath='{.items[0].metadata.name}') 8080:80
+
+# Access in browser
+open http://localhost:8080          # Frontend
+open http://localhost:8080/ghost    # Admin interface
+```
+
+**Reset KUBECONFIG** when done:
+
+```bash
+unset KUBECONFIG
+# or
+export KUBECONFIG=~/.kube/config
+```
+
 ## Development
 
 ### Testing
