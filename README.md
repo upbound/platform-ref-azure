@@ -140,6 +140,10 @@ Then access:
 - **Frontend**: `http://<EXTERNAL-IP>` (Your blog)
 - **Admin**: `http://<EXTERNAL-IP>/ghost` (Admin interface)
 
+You should see the Ghost admin login screen with "Upbound Rocks!" confirming your deployment:
+
+![Ghost Admin Interface](docs/images/ghost-admin.png)
+
 #### Option 2: Via kubectl port-forward (No external IP needed)
 
 ```bash
