@@ -142,7 +142,9 @@ Then access:
 
 You should see the Ghost admin login screen with "Upbound Rocks!" confirming your deployment:
 
-![Ghost Admin Interface](docs/images/ghost-admin.png)
+<p align="center">
+  <img src="docs/images/ghost-admin.png" width="500" alt="Ghost Admin Interface showing Upbound Rocks!">
+</p>
 
 #### Option 2: Via kubectl port-forward (No external IP needed)
 
