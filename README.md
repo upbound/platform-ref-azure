@@ -100,7 +100,7 @@ Once installed, you can create platform resources using the provided examples:
 # Create a cluster with networking, observability, and GitOps
 kubectl apply -f examples/cluster-xr.yaml
 
-# Create a MySQL database (after cluster is ready)
+# Create a MySQL database
 kubectl apply -f examples/mysql-xr.yaml
 
 # Deploy a sample application
