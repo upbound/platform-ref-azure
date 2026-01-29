@@ -1,16 +1,16 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: xclusters.azure.platformref.upbound.io
+  name: clusters.azure.platformref.upbound.io
 spec:
   compositeTypeRef:
     apiVersion: azure.platformref.upbound.io/v1alpha1
-    kind: XCluster
+    kind: Cluster
   mode: Pipeline
   pipeline:
   - functionRef:
-      name: upbound-platform-ref-azurexcluster
-    step: xcluster
+      name: upbound-platform-ref-azurecluster
+    step: cluster
   - functionRef:
       name: crossplane-contrib-function-auto-ready
     step: crossplane-contrib-function-auto-ready

@@ -4,15 +4,15 @@ metadata:
   name: platform-ref-azure-cluster-db-mysql
   namespace: default
 spec:
-  compositionSelector:
-    matchLabels:
-      dbengine: mysql
+  crossplane:
+    compositionSelector:
+      matchLabels:
+        dbengine: mysql
   parameters:
     region: westus
     storageGB: 20 #Minimum value is 20 for MySQL
     version: "8.0"
     passwordSecretRef:
-      namespace: default
       name: mysqlsecret
       key: password
     networkRef:

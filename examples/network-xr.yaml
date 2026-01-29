@@ -1,7 +1,8 @@
-apiVersion: azure.platformref.upbound.io/v1alpha1
-kind: XNetwork
+apiVersion: azure.platform.upbound.io/v1alpha1
+kind: Network
 metadata:
   name: ref-azure-network
+  namespace: default
 spec:
   parameters:
     id: ref-azure-network-from-xr

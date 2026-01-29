@@ -24,7 +24,7 @@ This platform uses **Upbound DevEx** with:
 ## Overview
 
 This reference platform outlines a specialized API for generating an AKS cluster
-([XCluster](apis/xclusters/definition.yaml)) that incorporates XRs from the specified configurations:
+([Cluster](apis/clusters/definition.yaml)) that incorporates XRs from the specified configurations:
 
 * [upbound-configuration-app](https://github.com/upbound/configuration-app)
 * [upbound-configuration-azure-database](https://github.com/upbound/configuration-azure-database)
@@ -35,12 +35,12 @@ This reference platform outlines a specialized API for generating an AKS cluster
 
 ```mermaid
 graph LR;
-    MyApp(My App)---MyCluster(XRC: my-cluster);
-    MyCluster---XRD1(XRD: XCluster);
-    MyApp---MyDB(XRC: my-db);
-    MyDB---XRD2(XRD: XSQLInstance);
+    MyApp(My App)---MyCluster(XR: my-cluster);
+    MyCluster---XRD1(XRD: Cluster);
+    MyApp---MyDB(XR: my-db);
+    MyDB---XRD2(XRD: SQLInstance);
 		subgraph Configuration:upbound/platform-ref-azure;
-	    XRD1---Composition(XAKS, XNetwork, XServices);
+	    XRD1---Composition(AKS, Network, Services);
 	    XRD2---Composition2(Composition);
 		end
 		subgraph Provider:upbound/provider-azure
@@ -65,7 +65,7 @@ style Postgres.MRs color:#000,fill:#81CABB,stroke:#000,stroke-width:2px
 ```
 
 Learn more about Composite Resources in the [Crossplane
-Docs](https://docs.crossplane.io/latest/concepts/compositions/).
+Docs](https://docs.crossplane.io/latest/composition/compositions/).
 
 ## Quickstart
 
@@ -89,7 +89,7 @@ up project build
 up test run tests/*
 
 # Render compositions with examples
-up composition render apis/xclusters/definition.yaml apis/xclusters/composition.yaml examples/cluster-claim.yaml
+up composition render apis/clusters/definition.yaml apis/clusters/composition.yaml examples/cluster-xr.yaml
 ```
 
 ## Using the Platform
@@ -98,19 +98,75 @@ Once installed, you can create platform resources using the provided examples:
 
 ```console
 # Create a cluster with networking, observability, and GitOps
-kubectl apply -f examples/cluster-claim.yaml
+kubectl apply -f examples/cluster-xr.yaml
 
-# Create a MySQL database (after cluster is ready)
-kubectl apply -f examples/mysql-claim.yaml
+# Create a MySQL database
+kubectl apply -f examples/mysql-xr.yaml
 
 # Deploy a sample application
-kubectl apply -f examples/app-claim.yaml
+kubectl apply -f examples/app-xr.yaml
 ```
 
 Monitor deployment status:
 
 ```console
-kubectl get claim,composite,managed
+kubectl get composite,managed
+```
+
+### Accessing Your Application
+
+Once your Ghost application is deployed, you can access it using one of these methods:
+
+#### Option 1: Via LoadBalancer (External IP)
+
+Get the AKS cluster kubeconfig and access Ghost:
+
+```bash
+# Get the kubeconfig from the AKS connection secret
+kubectl get secret <cluster-id>-akscluster -n default -o jsonpath='{.data.kubeconfig}' | base64 -d > /tmp/aks-kubeconfig
+
+# Use the AKS kubeconfig to check Ghost service
+export KUBECONFIG=/tmp/aks-kubeconfig
+kubectl get svc -n ghost -l app.kubernetes.io/name=ghost
+kubectl get pods -n ghost
+
+# Get the external IP
+EXTERNAL_IP=$(kubectl get svc -n ghost -l app.kubernetes.io/name=ghost -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')
+echo "Ghost Frontend: http://$EXTERNAL_IP"
+echo "Ghost Admin: http://$EXTERNAL_IP/ghost"
+```
+
+Then access:
+- **Frontend**: `http://<EXTERNAL-IP>` (Your blog)
+- **Admin**: `http://<EXTERNAL-IP>/ghost` (Admin interface)
+
+You should see the Ghost admin login screen with "Upbound Rocks!" confirming your deployment:
+
+<p align="center">
+  <img src="docs/images/ghost-admin.png" width="500" alt="Ghost Admin Interface showing Upbound Rocks!">
+</p>
+
+#### Option 2: Via kubectl port-forward (No external IP needed)
+
+```bash
+# Get the kubeconfig
+kubectl get secret <cluster-id>-akscluster -n default -o jsonpath='{.data.kubeconfig}' | base64 -d > /tmp/aks-kubeconfig
+export KUBECONFIG=/tmp/aks-kubeconfig
+
+# Forward Ghost service to local port 8080
+kubectl port-forward -n ghost svc/$(kubectl get svc -n ghost -l app.kubernetes.io/name=ghost -o jsonpath='{.items[0].metadata.name}') 8080:80
+
+# Access in browser
+open http://localhost:8080          # Frontend
+open http://localhost:8080/ghost    # Admin interface
+```
+
+**Reset KUBECONFIG** when done:
+
+```bash
+unset KUBECONFIG
+# or
+export KUBECONFIG=~/.kube/config
 ```
 
 ## Development
