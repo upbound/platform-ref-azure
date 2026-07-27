@@ -5,10 +5,15 @@ import models.io.upbound.platformref.azure.v1alpha1 as platformrefv1alpha1
 import models.io.crossplane.protection.v1beta1 as protectionv1beta1
 import models.io.crossplane.helmm.v1beta1 as helmv1beta1
 
-oxr = platformrefv1alpha1.Cluster{**option("params").oxr}
+# Note: avoid casting the full OXR (e.g. Cluster{**oxr}) because the
+# auto-generated model types status.conditions as a typed list which is
+# incompatible with the generic list Crossplane passes at runtime.
+# Instead, keep the raw OXR and cast only the sub-fields we need.
+oxr = option("params").oxr
 _ocds = option("params").ocds # observed composed resources
 _dxr = option("params").dxr # desired composite resource
 dcds = option("params").dcds # desired composed resources
+_params = platformrefv1alpha1.Cluster.spec.parameters{**oxr.spec?.parameters}
 
 _metadata = lambda name: str -> any {
     {
@@ -18,17 +23,17 @@ _metadata = lambda name: str -> any {
 }
 
 # Extract parameters from the observed composite resource (XR)
-_id = oxr.spec?.parameters?.id
-_region = oxr.spec?.parameters?.region
-_managementPolicies = oxr.spec?.parameters?.managementPolicies or ["*"]
-_providerConfigName = oxr.spec?.parameters?.providerConfigName or "default"
-_version = oxr.spec?.parameters?.version
-_nodeCount = oxr.spec?.parameters?.nodes?.count or 1
-_instanceType = oxr.spec?.parameters?.nodes?.instanceType
-_fluxVersion = oxr.spec?.parameters?.operators?.flux?.version
-_fluxSyncVersion = oxr.spec?.parameters?.operators?.fluxSync?.version
-_prometheusVersion = oxr.spec?.parameters?.operators?.prometheus?.version
-_gitops = oxr.spec?.parameters?.gitops or {}
+_id = _params?.id
+_region = _params?.region
+_managementPolicies = _params?.managementPolicies or ["*"]
+_providerConfigName = _params?.providerConfigName or "default"
+_version = _params?.version
+_nodeCount = _params?.nodes?.count or 1
+_instanceType = _params?.nodes?.instanceType
+_fluxVersion = _params?.operators?.flux?.version
+_fluxSyncVersion = _params?.operators?.fluxSync?.version
+_prometheusVersion = _params?.operators?.prometheus?.version
+_gitops = _params?.gitops or {}
 
 _items = [
     # Network - Azure networking infrastructure
